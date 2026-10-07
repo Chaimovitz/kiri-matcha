@@ -431,7 +431,7 @@ body.past .hs-layer,body.past .progress{opacity:0;visibility:hidden}
     [can,bowl,whisk].forEach(function(el){gsap.set(el,{xPercent:-50,yPercent:-50,force3D:true})});
     gsap.set(can,st.can[0]);gsap.set(whisk,st.whisk[0]);gsap.set(bowl,st.bowl[0]);
 
-    if(!reduce){
+    if(true){ /* rolagem sempre anima (é o usuário quem move); reduce só corta a flutuação */
       tl=gsap.timeline({defaults:{ease:'power2.inOut',duration:1},
         scrollTrigger:{trigger:'#main',start:'top top',end:'bottom bottom',scrub:(mobile||touch)?.4:1.2,invalidateOnRefresh:true}});
       // 1 → 2: lata avança, desliza à direita e gira; batedor e tigela saem
@@ -521,7 +521,7 @@ body.past .hs-layer,body.past .progress{opacity:0;visibility:hidden}
     addEventListener('scroll',fade,{passive:true});addEventListener('resize',fade);fade();
   })();
   /* ---------- lata 3D em CSS: cilindro de faixas com a textura desembrulhada da foto ---------- */
-  var N=(mobile||touch)?48:96, RATIO=1.445;
+  var N=(mobile||touch)?28:96, RATIO=1.445;
   function makeCyl(host){
     var tex=host.dataset.tex,gold=host.dataset.gold,cap=host.dataset.cap,strips=[],capEl=document.createElement('div');capEl.className='cap';
     for(var i=0;i<N;i++){var d=document.createElement('div');d.className='strip';['b','i','em'].forEach(function(t){var e=document.createElement(t);if(t==='em')e.className='spec';d.appendChild(e)});
@@ -637,7 +637,7 @@ body.past .hs-layer,body.past .progress{opacity:0;visibility:hidden}
     }
     render(0);
     var st={p:0};
-    if(window.gsap&&window.ScrollTrigger&&!reduce){
+    if(window.gsap&&window.ScrollTrigger){
       gsap.to(st,{p:1,ease:'none',onUpdate:function(){render(st.p)},
         scrollTrigger:{trigger:sec,start:'top top',end:'bottom bottom',scrub:touch?.35:1,invalidateOnRefresh:true}});
     }else{
@@ -658,7 +658,7 @@ body.past .hs-layer,body.past .progress{opacity:0;visibility:hidden}
       rots.forEach(function(r,i){
         var max=i===3?70:(i===1?34:26),ry=m.x*max+sway,rx=-m.y*6;
         r.style.transform='translate3d(0,'+bob.toFixed(2)+'px,0) rotateX('+rx.toFixed(2)+'deg) rotateY('+(i===3?0:ry).toFixed(2)+'deg)';
-        if(i===3){r.style.transform='translate3d(0,'+bob.toFixed(2)+'px,0) rotateX('+rx.toFixed(2)+'deg)';fin.forEach(function(c){c.host.style.transform='rotateX(-9deg) rotateY('+ry.toFixed(2)+'deg)';c.shade(ry)})}
+        if(i===3){r.style.transform='translate3d(0,'+bob.toFixed(2)+'px,0) rotateX('+rx.toFixed(2)+'deg)';if(!touch||!fin._done){fin._done=1;fin.forEach(function(c){var a=touch?0:ry;c.host.style.transform='rotateX(-9deg) rotateY('+a.toFixed(2)+'deg)';c.shade(a)})}}
         else if(sheens[i])sheens[i].style.setProperty('--sx',(50-ry*1.9).toFixed(1)+'%');
       });
       shadow.style.transform='translate3d('+(-m.x*18).toFixed(1)+'px,0,0) scale('+(1-bob/90).toFixed(3)+')';
