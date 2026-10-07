@@ -110,7 +110,7 @@ footer{position:relative;z-index:10;padding:28px clamp(16px,6vw,96px) calc(28px 
 
 
 /* processo: cena única imersiva */
-.imm{position:relative;z-index:10;height:620vh;background:var(--bg)}
+.imm{position:relative;z-index:10;height:520vh;background:var(--bg)}
 .imm-anchor{position:absolute;left:0;bottom:0;height:100vh;width:1px;pointer-events:none}
 .imm-pair{display:flex;gap:6vh;height:100%;align-items:flex-end}
 .imm-pair .imm-canbox{height:100%}
@@ -233,6 +233,26 @@ body.past .hs-layer,body.past .progress{opacity:0;visibility:hidden}
   .progress{display:none}
   .cue{display:none}
 }
+/* fim da página */
+.fim{position:relative;z-index:10;background:var(--bg);text-align:center;padding:clamp(80px,12vw,140px) 20px clamp(64px,8vw,100px)}
+.fim h2{font-size:clamp(2.2rem,5vw,4.2rem)}
+.fim p{margin:18px auto 0;max-width:40ch;color:var(--muted);font-size:17px;line-height:1.55}
+.fim .cta{margin-top:28px}
+.fim .cta .buy{height:48px;padding:0 26px;font-size:15px}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:60;transform:translate(-50%,20px);opacity:0;pointer-events:none;
+  padding:12px 18px;border-radius:999px;background:var(--ink);color:var(--bg);font-size:14px;transition:opacity .35s var(--ease),transform .35s var(--ease)}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+/* celular / toque: corta os efeitos mais caros de GPU */
+@media (max-width:760px),(pointer:coarse){
+  .nav{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(219,226,209,.96)}
+  .copy,.s3 .copy{backdrop-filter:none !important;-webkit-backdrop-filter:none !important;background:rgba(219,226,209,.92) !important}
+  .imm-rot img{filter:none}
+  .imm-type{filter:none}
+  .cyl .strip b{mix-blend-mode:normal;opacity:.35 !important}
+  .floor{filter:none}
+  .imm-shadow{filter:none}
+  .imm-pin{background:radial-gradient(60% 50% at 50% 50%,rgba(255,255,255,.5),rgba(255,255,255,0) 70%),var(--bg) !important}
+}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none !important;transition-duration:.01s !important}
 }
@@ -246,7 +266,7 @@ body.past .hs-layer,body.past .progress{opacity:0;visibility:hidden}
   <nav class="links" aria-label="Seções">
     <a href="#s2">A lata</a><a href="#s3">O chasen</a><a href="#s4">O conjunto</a><a href="#processo">Processo</a><a href="#colecao">Coleção</a>
   </nav>
-  <a class="buy" href="#s4">Comprar</a>
+  <a class="buy" href="#colecao">Comprar</a>
 </header>
 
 <div class="stage" aria-hidden="true">
@@ -352,6 +372,13 @@ body.past .hs-layer,body.past .progress{opacity:0;visibility:hidden}
   <span class="imm-anchor" id="colecao"></span>
 </section>
 
+<section class="fim" id="fim">
+  <p class="eyebrow">Kiri · Matcha cerimonial</p>
+  <h2>O ritual começa aqui.</h2>
+  <p>Kiri é uma marca conceitual. Este site foi desenhado e programado por Thomas Chaimovitz.</p>
+  <div class="cta"><a class="buy" href="https://instagram.com/baluartec7" target="_blank" rel="noopener">Quero um site assim</a><a class="ghost" href="#s1">Voltar ao início</a></div>
+</section>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <footer><span>Kiri Matcha · marca conceitual</span><span>Conceito e site: Thomas Chaimovitz</span></footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -377,7 +404,8 @@ body.past .hs-layer,body.past .progress{opacity:0;visibility:hidden}
   }
 
   var hasGsap=!!(window.gsap&&window.ScrollTrigger);
-  if(hasGsap)gsap.registerPlugin(ScrollTrigger);
+  if(hasGsap){gsap.registerPlugin(ScrollTrigger);ScrollTrigger.config({ignoreMobileResize:true});}
+  var touch=matchMedia("(pointer:coarse)").matches;
   function isMob(){return (window.innerWidth||document.documentElement.clientWidth||1000)<=760}
   function build(){
   mobile=isMob();
@@ -404,7 +432,7 @@ body.past .hs-layer,body.past .progress{opacity:0;visibility:hidden}
 
     if(!reduce){
       tl=gsap.timeline({defaults:{ease:'power2.inOut',duration:1},
-        scrollTrigger:{trigger:'#main',start:'top top',end:'bottom bottom',scrub:1.2,invalidateOnRefresh:true}});
+        scrollTrigger:{trigger:'#main',start:'top top',end:'bottom bottom',scrub:(mobile||touch)?.4:1.2,invalidateOnRefresh:true}});
       // 1 → 2: lata avança, desliza à direita e gira; batedor e tigela saem
       tl.addLabel('s2',0)
         .to(can,st.can[1],'s2')
@@ -447,9 +475,10 @@ body.past .hs-layer,body.past .progress{opacity:0;visibility:hidden}
   addEventListener('pointermove',function(e){tx=e.clientX/innerWidth*2-1;ty=e.clientY/innerHeight*2-1},{passive:true});
   addEventListener('deviceorientation',function(e){if(e.gamma==null)return;tx=Math.max(-1,Math.min(1,e.gamma/30));ty=Math.max(-1,Math.min(1,(e.beta-45)/30))},{passive:true});
   var tilts=[{el:can.firstElementChild,d:1,ph:0},{el:whisk.firstElementChild,d:1.6,ph:1.7},{el:bowl.firstElementChild,d:1.25,ph:3.1}];
-  var t0=performance.now();
+  var t0=performance.now(),stageEl=document.querySelector('.stage');
   function loop(now){
     requestAnimationFrame(loop);
+    if(stageEl.style.visibility==='hidden')return;
     var t=(now-t0)/1000;
     mx+=(tx-mx)*.06;my+=(ty-my)*.06;
     for(var i=0;i<tilts.length;i++){var o=tilts[i],d=o.d;
@@ -491,7 +520,7 @@ body.past .hs-layer,body.past .progress{opacity:0;visibility:hidden}
     addEventListener('scroll',fade,{passive:true});addEventListener('resize',fade);fade();
   })();
   /* ---------- lata 3D em CSS: cilindro de faixas com a textura desembrulhada da foto ---------- */
-  var N=mobile?60:96, RATIO=1.445;
+  var N=(mobile||touch)?48:96, RATIO=1.445;
   function makeCyl(host){
     var tex=host.dataset.tex,gold=host.dataset.gold,cap=host.dataset.cap,strips=[],capEl=document.createElement('div');capEl.className='cap';
     for(var i=0;i<N;i++){var d=document.createElement('div');d.className='strip';['b','i','em'].forEach(function(t){var e=document.createElement(t);if(t==='em')e.className='spec';d.appendChild(e)});
@@ -511,7 +540,7 @@ body.past .hs-layer,body.past .progress{opacity:0;visibility:hidden}
     function dk(a){var lam=Math.max(0,Math.cos(a+0.35));return Math.min(.55,(1-lam)*.48)}
     function sp(a){return Math.pow(Math.max(0,Math.cos(a+0.3)),26)}
     var hw=Math.PI/N;
-    o.shade=function(rot){ // luz principal vindo da esquerda-frente; gradiente contínuo dentro de cada faixa
+    o.shade=function(rot){ if(o._lr!==undefined&&Math.abs(rot-o._lr)<(touch?2:.35))return; o._lr=rot; // luz principal vindo da esquerda-frente; gradiente contínuo dentro de cada faixa
       for(var i=0;i<strips.length;i++){var st=strips[i],a=(st._ang+rot)*Math.PI/180;
         if(Math.cos(a)<-0.05){continue}
         var d0=dk(a-hw),d1=dk(a+hw),s0=sp(a-hw),s1=sp(a+hw);
@@ -609,7 +638,7 @@ body.past .hs-layer,body.past .progress{opacity:0;visibility:hidden}
     var st={p:0};
     if(window.gsap&&window.ScrollTrigger&&!reduce){
       gsap.to(st,{p:1,ease:'none',onUpdate:function(){render(st.p)},
-        scrollTrigger:{trigger:sec,start:'top top',end:'bottom bottom',scrub:1,invalidateOnRefresh:true}});
+        scrollTrigger:{trigger:sec,start:'top top',end:'bottom bottom',scrub:touch?.35:1,invalidateOnRefresh:true}});
     }else{
       var cur=0;(function f(){requestAnimationFrame(f);var r=sec.getBoundingClientRect(),span=sec.offsetHeight-innerHeight,
         tp=Math.max(0,Math.min(1,-r.top/span));cur+=reduce?(tp-cur):(tp-cur)*.12;render(cur)})();
@@ -643,9 +672,12 @@ body.past .hs-layer,body.past .progress{opacity:0;visibility:hidden}
     setActive(i);
   };
 
+  var toastEl=document.getElementById('toast'),toastT;
+  function toast(msg){toastEl.textContent=msg;toastEl.classList.add('on');clearTimeout(toastT);toastT=setTimeout(function(){toastEl.classList.remove('on')},2200)}
+  [].forEach.call(document.querySelectorAll('.imm-body .buy'),function(b){b.addEventListener('click',function(){toast(b.dataset.name+' adicionado à sacola')})});
   /* ---------- navegação ---------- */
   dots.forEach(function(d){d.addEventListener('click',function(){document.getElementById(d.dataset.go).scrollIntoView({behavior:reduce?'auto':'smooth'})})});
-  document.getElementById('buyAll').addEventListener('click',function(e){e.preventDefault();var b=this;b.textContent='Adicionado à sacola';setTimeout(function(){b.textContent='Comprar o conjunto'},2400)});
+  document.getElementById('buyAll').addEventListener('click',function(e){e.preventDefault();var b=this;toast('Conjunto adicionado à sacola');b.textContent='Adicionado à sacola';setTimeout(function(){b.textContent='Comprar o conjunto'},2400)});
 })();
 </script>
 
