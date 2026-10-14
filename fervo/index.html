@@ -1,0 +1,297 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Fervo</title>
+<meta name="description" content="Fervo: soda fermentada de caju, jabuticaba, gengibre com limão-cravo e hibisco, em garrafinha retornável de 355 ml. Demo de portfólio, marca fictícia.">
+<meta name="theme-color" content="#F2ECE1">
+<link rel="stylesheet" href="fonts/fonts.css">
+<link rel="stylesheet" href="style.css">
+<script type="importmap">{"imports":{"three":"./vendor/three.module.js","three/addons/":"./vendor/addons/"}}</script>
+<canvas id="gl" aria-hidden="true"></canvas>
+<i id="vh-probe" aria-hidden="true"></i>
+
+<div id="loader" role="status" aria-live="polite">
+  <div class="ld-mark">fervo</div>
+  <div class="ld-row"><span class="ld-label">Abrindo a garrafa</span><span class="ld-num" id="ld-num">000</span></div>
+  <div class="ld-bar"><i id="ld-bar"></i></div>
+</div>
+
+<header class="top">
+  <a class="brand" href="#abertura" data-goto="abertura" aria-label="Fervo, voltar ao início">fervo</a>
+  <nav class="flavors" aria-label="Sabores">
+    <a href="#caju" data-goto="caju" class="f-caju"><i aria-hidden="true"></i>Caju</a>
+    <a href="#jabuticaba" data-goto="jabuticaba" class="f-jabuticaba"><i aria-hidden="true"></i>Jabuticaba</a>
+    <a href="#gengibre" data-goto="gengibre" class="f-gengibre"><i aria-hidden="true"></i>Gengibre</a>
+    <a href="#hibisco" data-goto="hibisco" class="f-hibisco"><i aria-hidden="true"></i>Hibisco</a>
+  </nav>
+  <a class="top-cta" href="#onde" data-goto="onde">Onde encontrar</a>
+</header>
+
+<div id="hotspots">
+  <button class="hs" data-hs="caju-0" aria-expanded="false"><span class="hs-dot"></span><span class="hs-card"><b>Polpa, não suco</b><span><em>18%</em> de caju prensado inteiro em cada garrafa, com a fibra.</span></span></button>
+  <button class="hs" data-hs="jabuticaba-0" aria-expanded="false"><span class="hs-dot"></span><span class="hs-card"><b>Safra curta</b><span>Três semanas de colheita por ano. Este lote é de <em>setembro</em>.</span></span></button>
+  <button class="hs" data-hs="gengibre-0" aria-expanded="false"><span class="hs-dot"></span><span class="hs-card"><b>Limão-cravo</b><span>Casca laranja e perfume de cravo. Entram só o suco e a <em>raspa</em>.</span></span></button>
+  <button class="hs" data-hs="hibisco-0" aria-expanded="false"><span class="hs-dot"></span><span class="hs-card"><b>Infusão a frio</b><span><em>12 h a 6 °C</em>: a flor solta cor e acidez sem amargar.</span></span></button>
+</div>
+
+
+<main id="story">
+  <section class="sec" id="abertura" data-side="center" aria-labelledby="t-abertura">
+    <div class="sec-inner">
+      <h1 class="vh ttl" id="t-abertura">Fervo, soda fermentada de fruta brasileira</h1>
+      <div class="blk blk-top card">
+        <p class="kicker">Lote 07 · Sabará, MG</p>
+        <p class="blk-h" aria-hidden="true">Soda fermentada de fruta brasileira</p>
+        <p class="lead">Chá verde, açúcar demerara e fruta prensada. Nove dias no tanque, até quatro na garrafa. O gás é da própria fermentação.</p>
+      </div>
+      <dl class="blk blk-l">
+        <div><dt>Fermentaria</dt><dd>Sabará, MG</dd></div>
+        <div><dt>Sabores</dt><dd>4 frutas do Brasil</dd></div>
+      </dl>
+      <dl class="blk blk-r">
+        <div><dt>Garrafa</dt><dd>355 ml retornável</dd></div>
+        <div><dt>Não pasteurizada</dt><dd>Sempre gelada</dd></div>
+      </dl>
+      <p class="cue" aria-hidden="true">Role para provar</p>
+    </div>
+  </section>
+
+  <section class="sec" id="caju" data-side="left" aria-labelledby="t-caju">
+    <div class="sec-inner">
+      <h2 class="vh ttl" id="t-caju">Caju</h2>
+      <div class="blk blk-top card">
+        <p class="kicker"><span>01</span> Soda fermentada</p>
+        <p class="blk-h" aria-hidden="true">Caju</p>
+        <p class="lead">Caju do Piauí colhido maduro e prensado inteiro no mesmo dia. O travo fica; quase todo o açúcar some na fermentação.</p>
+      </div>
+      <dl class="blk blk-l">
+        <div><dt>Fermentação</dt><dd>9 dias + 72 h</dd></div>
+        <div><dt>Açúcar</dt><dd>3,6 g/100 ml</dd></div>
+      </dl>
+      <dl class="blk blk-r">
+        <div><dt>Álcool</dt><dd>abaixo de 0,5%</dd></div>
+        <div><dt>Garrafa</dt><dd>355 ml · 52 kcal</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="sec" id="jabuticaba" data-side="right" aria-labelledby="t-jabuticaba">
+    <div class="sec-inner">
+      <h2 class="vh ttl" id="t-jabuticaba">Jabuticaba</h2>
+      <div class="blk blk-top card">
+        <p class="kicker"><span>02</span> Soda fermentada</p>
+        <p class="blk-h" aria-hidden="true">Jabuticaba</p>
+        <p class="lead">Jabuticaba de Sabará fermentada com a casca. É ela que dá a cor de vinho e o amargor leve que fecha o gole.</p>
+      </div>
+      <dl class="blk blk-l">
+        <div><dt>Fermentação</dt><dd>9 dias + 96 h</dd></div>
+        <div><dt>Açúcar</dt><dd>4,1 g/100 ml</dd></div>
+      </dl>
+      <dl class="blk blk-r">
+        <div><dt>Álcool</dt><dd>abaixo de 0,5%</dd></div>
+        <div><dt>Garrafa</dt><dd>355 ml · 59 kcal</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="sec" id="gengibre" data-side="left" aria-labelledby="t-gengibre">
+    <div class="sec-inner">
+      <h2 class="vh ttl" id="t-gengibre">Gengibre &amp; limão-cravo</h2>
+      <div class="blk blk-top card">
+        <p class="kicker"><span>03</span> Soda fermentada</p>
+        <p class="blk-h" aria-hidden="true">Gengibre &amp; limão-cravo</p>
+        <p class="lead">Gengibre ralado na hora e limão-cravo de quintal, o mesmo da caipirinha de roça. Arde primeiro, refresca depois.</p>
+      </div>
+      <dl class="blk blk-l">
+        <div><dt>Fermentação</dt><dd>9 dias + 48 h</dd></div>
+        <div><dt>Açúcar</dt><dd>2,9 g/100 ml</dd></div>
+      </dl>
+      <dl class="blk blk-r">
+        <div><dt>Álcool</dt><dd>abaixo de 0,5%</dd></div>
+        <div><dt>Garrafa</dt><dd>355 ml · 42 kcal</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="sec" id="hibisco" data-side="right" aria-labelledby="t-hibisco">
+    <div class="sec-inner">
+      <h2 class="vh ttl" id="t-hibisco">Hibisco</h2>
+      <div class="blk blk-top card">
+        <p class="kicker"><span>04</span> Soda fermentada</p>
+        <p class="blk-h" aria-hidden="true">Hibisco</p>
+        <p class="lead">Flor de hibisco seca ao sol e infundida a frio por 12 horas. A cor de rubi vem da flor, sem corante.</p>
+      </div>
+      <dl class="blk blk-l">
+        <div><dt>Fermentação</dt><dd>9 dias + 72 h</dd></div>
+        <div><dt>Açúcar</dt><dd>3,2 g/100 ml</dd></div>
+      </dl>
+      <dl class="blk blk-r">
+        <div><dt>Álcool</dt><dd>abaixo de 0,5%</dd></div>
+        <div><dt>Garrafa</dt><dd>355 ml · 46 kcal</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="sec" id="processo" data-side="center" aria-labelledby="t-processo">
+    <div class="sec-inner">
+      <h2 class="vh ttl" id="t-processo">Processo: nove dias de fermentação e gás natural</h2>
+      <figure class="polaroid">
+        <picture>
+          <source type="image/avif" srcset="img/processo-960.avif 960w, img/processo-1600.avif 1600w" sizes="(max-width: 820px) 34vw, 16vw">
+          <img src="img/processo-960.webp" srcset="img/processo-960.webp 960w, img/processo-1600.webp 1600w" sizes="(max-width: 820px) 34vw, 16vw" width="960" height="536" alt="Fermentaria artesanal em Minas: potes de vidro com a bebida, tanques de inox ao fundo e caixas de fruta." decoding="async" loading="eager" fetchpriority="low">
+        </picture>
+        <figcaption>Tanque 04 · dia 9</figcaption>
+      </figure>
+      <div class="blk blk-top card">
+        <p class="kicker">Processo</p>
+        <p class="blk-h" aria-hidden="true">Nove dias no tanque, gás da própria fruta</p>
+        <p class="lead">A base de chá verde fermenta nove dias em tanque aberto, coberto por pano. Depois entram a fruta e a tampa: o gás nasce dentro da garrafa, sem CO₂ de cilindro.</p>
+      </div>
+      <dl class="blk blk-l">
+        <div><dt>Tanque</dt><dd>9 dias a 24 °C</dd></div>
+        <div><dt>Garrafa</dt><dd>48 a 96 h</dd></div>
+      </dl>
+      <dl class="blk blk-r">
+        <div><dt>Gás</dt><dd>Natural</dd></div>
+        <div><dt>Geladeira</dt><dd>0 a 6 °C</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="sec" id="onde" data-side="center" aria-labelledby="t-onde">
+    <div class="sec-inner">
+      <h2 class="vh ttl" id="t-onde">Onde encontrar a Fervo: os quatro sabores e onde achar cada um</h2>
+      <div class="blk blk-top card">
+        <p class="kicker">Onde encontrar</p>
+        <p class="blk-h" aria-hidden="true">38 pontos em Minas e São Paulo</p>
+        <p class="lead">Sai gelada de empórios e bares. Devolva a garrafa no ponto de venda e ganhe R$&nbsp;1.</p>
+        <button class="cta" id="cta-onde" type="button" aria-expanded="false" aria-controls="fcards">Ver onde achar <span aria-hidden="true">→</span></button>
+      </div>
+      <div class="fcards" id="fcards" role="list" aria-label="Os quatro sabores: onde achar">
+        <article class="fcard f-caju" data-flavor="caju" role="listitem">
+          <div class="fcard-inner">
+            <button class="fcard-face fcard-front" type="button" aria-expanded="false" aria-pressed="false" aria-controls="fcb-caju">
+              <img class="fc-fruit" src="img/caju-card-512.webp" width="512" height="512" alt="" decoding="async" loading="eager" fetchpriority="low">
+              <span class="fc-num">01</span>
+              <span class="fc-name">Caju</span>
+              <span class="fc-notes">maduro, travo leve, final seco</span>
+              <span class="fc-serve"><span>Melhor servida</span>4 °C, copo americano</span>
+              <span class="fc-foot"><span class="fc-seal">3,6 g açúcar · 52 kcal</span><span class="fc-turn" aria-hidden="true">Virar ↻</span></span>
+              <span class="vh">Virar o cartão de Caju para ver onde achar</span>
+            </button>
+            <div class="fcard-face fcard-back" id="fcb-caju" role="group" aria-label="Caju: onde achar" inert>
+              <span class="fc-kicker">Caju · onde achar</span>
+              <ul class="fc-where">
+                <li><b>BH</b> empório na Savassi</li>
+                <li><b>Sabará</b> bar no centro histórico</li>
+                <li><b>São Paulo</b> empório em Pinheiros</li>
+              </ul>
+              <dl class="fc-meta">
+                <div><dt>Combina com</dt><dd>Torresmo de barriga com limão</dd></div>
+                <div><dt>Safra</dt><dd>Setembro a dezembro</dd></div>
+              </dl>
+              <span class="fc-actions">
+                <a class="fc-map" href="#onde" data-goto="onde">Ver no mapa <span aria-hidden="true">→</span></a>
+                <button class="fc-back" type="button" aria-label="Voltar para a frente do cartão de Caju">↺</button>
+              </span>
+            </div>
+          </div>
+        </article>
+        <article class="fcard f-jabuticaba" data-flavor="jabuticaba" role="listitem">
+          <div class="fcard-inner">
+            <button class="fcard-face fcard-front" type="button" aria-expanded="false" aria-pressed="false" aria-controls="fcb-jabuticaba">
+              <img class="fc-fruit" src="img/jabuticaba-card-512.webp" width="512" height="512" alt="" decoding="async" loading="eager" fetchpriority="low">
+              <span class="fc-num">02</span>
+              <span class="fc-name">Jabuticaba</span>
+              <span class="fc-notes">casca, vinho jovem, amargor curto</span>
+              <span class="fc-serve"><span>Melhor servida</span>6 °C, taça de vinho</span>
+              <span class="fc-foot"><span class="fc-seal">4,1 g açúcar · 59 kcal</span><span class="fc-turn" aria-hidden="true">Virar ↻</span></span>
+              <span class="vh">Virar o cartão de Jabuticaba para ver onde achar</span>
+            </button>
+            <div class="fcard-face fcard-back" id="fcb-jabuticaba" role="group" aria-label="Jabuticaba: onde achar" inert>
+              <span class="fc-kicker">Jabuticaba · onde achar</span>
+              <ul class="fc-where">
+                <li><b>Sabará</b> feira de sábado</li>
+                <li><b>BH</b> bar no Santa Tereza</li>
+                <li><b>Campinas</b> empório no Cambuí</li>
+              </ul>
+              <dl class="fc-meta">
+                <div><dt>Combina com</dt><dd>Queijo canastra meia-cura</dd></div>
+                <div><dt>Safra</dt><dd>Setembro a novembro</dd></div>
+              </dl>
+              <span class="fc-actions">
+                <a class="fc-map" href="#onde" data-goto="onde">Ver no mapa <span aria-hidden="true">→</span></a>
+                <button class="fc-back" type="button" aria-label="Voltar para a frente do cartão de Jabuticaba">↺</button>
+              </span>
+            </div>
+          </div>
+        </article>
+        <article class="fcard f-gengibre" data-flavor="gengibre" role="listitem">
+          <div class="fcard-inner">
+            <button class="fcard-face fcard-front" type="button" aria-expanded="false" aria-pressed="false" aria-controls="fcb-gengibre">
+              <img class="fc-fruit" src="img/gengibre-card-512.webp" width="512" height="512" alt="" decoding="async" loading="eager" fetchpriority="low">
+              <span class="fc-num">03</span>
+              <span class="fc-name">Gengibre &amp; limão-cravo</span>
+              <span class="fc-notes">arde na entrada, casca cítrica, final limpo</span>
+              <span class="fc-serve"><span>Melhor servida</span>4 °C, copo alto com gelo</span>
+              <span class="fc-foot"><span class="fc-seal">2,9 g açúcar · 42 kcal</span><span class="fc-turn" aria-hidden="true">Virar ↻</span></span>
+              <span class="vh">Virar o cartão de Gengibre &amp; limão-cravo para ver onde achar</span>
+            </button>
+            <div class="fcard-face fcard-back" id="fcb-gengibre" role="group" aria-label="Gengibre &amp; limão-cravo: onde achar" inert>
+              <span class="fc-kicker">Gengibre &amp; limão-cravo · onde achar</span>
+              <ul class="fc-where">
+                <li><b>BH</b> bar na Savassi</li>
+                <li><b>Nova Lima</b> feira de domingo</li>
+                <li><b>São Paulo</b> bar na Vila Madalena</li>
+              </ul>
+              <dl class="fc-meta">
+                <div><dt>Combina com</dt><dd>Pastel de angu com pimenta</dd></div>
+                <div><dt>Safra</dt><dd>Gengibre de maio a setembro; limão-cravo de abril a julho</dd></div>
+              </dl>
+              <span class="fc-actions">
+                <a class="fc-map" href="#onde" data-goto="onde">Ver no mapa <span aria-hidden="true">→</span></a>
+                <button class="fc-back" type="button" aria-label="Voltar para a frente do cartão de Gengibre &amp; limão-cravo">↺</button>
+              </span>
+            </div>
+          </div>
+        </article>
+        <article class="fcard f-hibisco" data-flavor="hibisco" role="listitem">
+          <div class="fcard-inner">
+            <button class="fcard-face fcard-front" type="button" aria-expanded="false" aria-pressed="false" aria-controls="fcb-hibisco">
+              <img class="fc-fruit" src="img/hibisco-card-512.webp" width="512" height="512" alt="" decoding="async" loading="eager" fetchpriority="low">
+              <span class="fc-num">04</span>
+              <span class="fc-name">Hibisco</span>
+              <span class="fc-notes">ácido, frutas vermelhas, tanino leve</span>
+              <span class="fc-serve"><span>Melhor servida</span>4 °C, taça</span>
+              <span class="fc-foot"><span class="fc-seal">3,2 g açúcar · 46 kcal</span><span class="fc-turn" aria-hidden="true">Virar ↻</span></span>
+              <span class="vh">Virar o cartão de Hibisco para ver onde achar</span>
+            </button>
+            <div class="fcard-face fcard-back" id="fcb-hibisco" role="group" aria-label="Hibisco: onde achar" inert>
+              <span class="fc-kicker">Hibisco · onde achar</span>
+              <ul class="fc-where">
+                <li><b>São Paulo</b> empório em Pinheiros</li>
+                <li><b>Campinas</b> bar no Cambuí</li>
+                <li><b>Nova Lima</b> empório no centro</li>
+              </ul>
+              <dl class="fc-meta">
+                <div><dt>Combina com</dt><dd>Goiabada cascão com queijo minas</dd></div>
+                <div><dt>Safra</dt><dd>Abril a junho</dd></div>
+              </dl>
+              <span class="fc-actions">
+                <a class="fc-map" href="#onde" data-goto="onde">Ver no mapa <span aria-hidden="true">→</span></a>
+                <button class="fc-back" type="button" aria-label="Voltar para a frente do cartão de Hibisco">↺</button>
+              </span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="disclaimer">Marca fictícia. Imagens geradas para a demo.</footer>
+
+<script src="vendor/gsap.min.js"></script>
+<script type="module" src="scene.js"></script>
+<script type="module" src="ui.js"></script>
+
+</body></html>
