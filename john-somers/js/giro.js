@@ -41,7 +41,7 @@ export class Giro {
   // baixa o vídeo inteiro antes de usar (arrastar não pode esperar rede)
   carrega() {
     if (this.carregando) return this.prom; this.carregando = true;
-    const url = `giro/${this.nome}-${leve.matches ? 'm' : 'd'}.mp4?v=8`; // versão no endereço: o cache de 1 dia não segura o arquivo antigo
+    const url = `giro/${this.nome}-${leve.matches ? 'm' : 'd'}.mp4?v=9`; // versão no endereço: o cache de 1 dia não segura o arquivo antigo
     this.prom = fetch(url).then(r => { if (!r.ok) throw new Error(r.status); return r.blob(); })
       .then(b => { this.v.src = URL.createObjectURL(b); this.v.preload = 'auto'; this.v.load(); })
       .catch(() => { this.v.src = url; this.v.preload = 'auto'; this.v.load(); });

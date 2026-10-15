@@ -2,7 +2,7 @@
 // o quadro); o close da punção também é foto, com a luz rasante andando por cima.
 // Um relógio só (este rAF) para a rolagem (Lenis), os giros, a vitrine e o 3D.
 import Lenis from 'lenis';
-import { Giro } from './giro.js?v=8';
+import { Giro } from './giro.js?v=9';
 
 const html = document.documentElement, $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const reduz = matchMedia('(prefers-reduced-motion: reduce)').matches;
