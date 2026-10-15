@@ -43,6 +43,25 @@ const ioVid = new IntersectionObserver(es => es.forEach(e => {
 }), { rootMargin: '10% 0px' });
 ioVid.observe(video);
 
+
+// ---------- acervo: filtro por categoria e reflexo metálico que segue o cursor ----------
+const obras = $$('.obra'), filtros = $$('.filtros button');
+function filtra(cat) {
+  let vis = [];
+  obras.forEach(o => { const ok = cat === 'todas' || o.dataset.cat === cat; o.classList.toggle('fora', !ok); o.classList.remove('solo'); if (ok) vis.push(o); });
+  if (vis.length % 2) vis[vis.length - 1].classList.add('solo'); // grade de 2 no celular sem peça órfã
+  filtros.forEach(b => { const on = b.dataset.f === cat; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+}
+filtros.forEach(b => b.addEventListener('click', () => filtra(b.dataset.f)));
+filtra('todas');
+let reflexo = 0, alvoRef = null, ex = 0, ey = 0;
+addEventListener('pointermove', e => {
+  if (e.pointerType !== 'mouse') return;
+  const o = e.target.closest && e.target.closest('.obra'); if (!o) return;
+  alvoRef = o; ex = e.clientX; ey = e.clientY;
+  if (!reflexo) reflexo = requestAnimationFrame(() => { reflexo = 0; const r = alvoRef.getBoundingClientRect(); alvoRef.style.setProperty('--rx', ((ex - r.left) / r.width).toFixed(3)); alvoRef.style.setProperty('--ry', ((ey - r.top) / r.width).toFixed(3)); });
+}, { passive: true });
+
 // ---------- palco 3D ----------
 const canvas = $('#gl');
 let R = null;
@@ -54,9 +73,9 @@ function semTres() { html.classList.add('sem3d'); R = null; liberar(); }
 if (!R) semTres();
 else canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); semTres(); }, false);
 
-const ancoras = {}; let trilho = []; const SECOES = { marca: $('#marca'), historia: $('#historia'), vitrine: $('#vitrine'), loja: $('#loja') };
+const ancoras = {}; let trilho = []; const SECOES = { marca: $('#marca'), vitrine: $('#vitrine'), acervo: $('#acervo'), loja: $('#loja') };
 const etq = { calice: $('[data-peca="calice"]'), jarra: $('[data-peca="jarra"]'), galhetas: $('[data-peca="galhetas"]'), caneca: $('[data-peca="caneca"]') };
-const trilhaLi = $$('.trilha li'), arrasto = $('#arrasto');
+const trilhaLi = $$('.trilha li'), arrasto = $('#arrasto'), fixoVit = $('#vitrine .fixo');
 
 if (R) iniciar();
 else laco2D();
@@ -68,17 +87,17 @@ function laco2D() { // sem WebGL: só a rolagem e o vídeo
 
 function iniciar() {
   R.outputColorSpace = THREE.SRGBColorSpace;
-  R.toneMapping = THREE.ACESFilmicToneMapping; R.toneMappingExposure = 1.0;
-  R.setClearColor(0x0b0b0a, 1);
+  R.toneMapping = THREE.ACESFilmicToneMapping; R.toneMappingExposure = 1.12; // galeria clara, não breu
+  R.setClearColor(0x171717, 1);
   const cena = new THREE.Scene();
-  cena.fog = new THREE.Fog(0x0b0b0a, 8, 26);
+  cena.fog = new THREE.Fog(0x171717, 10, 30);
   const cam = new THREE.PerspectiveCamera(28, 1, .04, 80);
 
   let envClaro = null;
   // ---- estúdio para os reflexos: caixas de luz num quarto escuro (HDR via PMREM) ----
   {
     const s = new THREE.Scene(), cx = new THREE.BoxGeometry(1, 1, 1);
-    const sala = new THREE.Mesh(cx, new THREE.MeshBasicMaterial({ color: 0x100f0e, side: THREE.BackSide })); sala.scale.set(30, 18, 30); s.add(sala);
+    const sala = new THREE.Mesh(cx, new THREE.MeshBasicMaterial({ color: 0x353330, side: THREE.BackSide })); // sala carvão: reflexos claros e limpos sala.scale.set(30, 18, 30); s.add(sala);
     const L = (c, k, p, e) => { const m = new THREE.Mesh(cx, new THREE.MeshBasicMaterial({ color: new THREE.Color(c).multiplyScalar(k) })); m.position.set(...p); m.scale.set(...e); s.add(m); };
     L(0xffffff, 7, [0, 8.5, 0], [12, .2, 6]);          // softbox de cima: o brilho longo nas peças
     L(0xfff0dc, 6, [-14.5, 2, 2], [.2, 10, 3]);        // tira quente à esquerda
@@ -90,22 +109,24 @@ function iniciar() {
     const pm = new THREE.PMREMGenerator(R); cena.environment = pm.fromScene(s, .02).texture;
     cena.environmentRotation.set(0, .5, 0);
     // estúdio claro só para as peças polidas (jarra, galhetas): a sala clara das fotos de catálogo, senão o metal espelhado fica preto
-    sala.material.color.set(0x55524d);
+    sala.material.color.set(0x67635d);
     envClaro = pm.fromScene(s, .02).texture; pm.dispose();
   }
-  const chave = new THREE.DirectionalLight(0xfff0dc, 1.3); chave.position.set(-4, 6, 5); cena.add(chave);
+  const chave = new THREE.DirectionalLight(0xfff0dc, 1.6); chave.position.set(-4, 6, 5); cena.add(chave);
+  const ceu = new THREE.HemisphereLight(0xfff4e8, 0x1c1a18, .6); cena.add(ceu); // luz ambiente difusa da galeria (madeira e pedestais)
   const recorte = new THREE.DirectionalLight(0xcbd8ff, 2.0); recorte.position.set(5, 3, -6); cena.add(recorte);
   const lanterna = new THREE.PointLight(0xfff1df, 0, 0, 2); cena.add(lanterna);
 
   // ---- texturas utilitárias (canvas) ----
   const tex = (w, h, f, srgb = true) => { const c = document.createElement('canvas'); c.width = w; c.height = h; f(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); if (srgb) t.colorSpace = THREE.SRGBColorSpace; return t; };
-  const texLado = tex(8, 512, (g, w, h) => { const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#45413b'); gr.addColorStop(.006, '#2c2925'); gr.addColorStop(.05, '#1b1917'); gr.addColorStop(.22, '#111010'); gr.addColorStop(1, '#0b0b0a'); g.fillStyle = gr; g.fillRect(0, 0, w, h); });
+  const texLado = tex(8, 512, (g, w, h) => { const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#5a554e'); gr.addColorStop(.006, '#3a3631'); gr.addColorStop(.05, '#2a2826'); gr.addColorStop(.22, '#1e1d1c'); gr.addColorStop(1, '#171717'); g.fillStyle = gr; g.fillRect(0, 0, w, h); });
   const texSombra = tex(256, 256, (g, w, h) => { const gr = g.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2); gr.addColorStop(0, 'rgba(0,0,0,.96)'); gr.addColorStop(.3, 'rgba(0,0,0,.66)'); gr.addColorStop(.62, 'rgba(0,0,0,.22)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = gr; g.fillRect(0, 0, w, h); }, false);
   const texMadeira = new THREE.TextureLoader().load('img/madeira.webp', t => R.initTexture(t)); texMadeira.colorSpace = THREE.SRGBColorSpace; texMadeira.anisotropy = Math.min(8, R.capabilities.getMaxAnisotropy());
-  const matLado = new THREE.MeshBasicMaterial({ map: texLado }), matBaixo = new THREE.MeshBasicMaterial({ color: 0x0b0b0a });
+  const matBaixo = new THREE.MeshBasicMaterial({ color: 0x171717 });
+  const matCorpo = new THREE.MeshStandardMaterial({ map: texMadeira, color: 0x3a2219, roughness: .55, metalness: 0, envMapIntensity: .35 }); // corpo do pedestal em mogno
   // tampo de madeira escura envernizada (o verniz é o reflexo; o veio só aparece de perto)
-  const matMadeira = new THREE.MeshPhysicalMaterial({ map: texMadeira, color: 0x4f433b, roughness: .6, metalness: 0, clearcoat: 1, clearcoatRoughness: .3, envMapIntensity: .32 });
-  const matMadeiraLado = new THREE.MeshStandardMaterial({ map: texMadeira, color: 0x241e1a, roughness: .75, metalness: 0, envMapIntensity: .15 }); // de lado o verniz virava uma caixa cinza
+  const matMadeira = new THREE.MeshPhysicalMaterial({ map: texMadeira, color: 0x5a3426, roughness: .5, metalness: 0, clearcoat: 1, clearcoatRoughness: .22, envMapIntensity: .45 }); // mogno avermelhado, como nas fotos
+  const matMadeiraLado = new THREE.MeshStandardMaterial({ map: texMadeira, color: 0x46281d, roughness: .6, metalness: 0, envMapIntensity: .3 }); // de lado o verniz virava uma caixa cinza
   const matSombra = new THREE.MeshBasicMaterial({ map: texSombra, transparent: true, depthWrite: false, toneMapped: false });
   const tpP = texturasPuncao(R); let texParede = null; // texturas da punção: já existem (neutras) e se completam sozinhas
 
@@ -119,9 +140,10 @@ function iniciar() {
   const P = Object.fromEntries(PECAS.map(p => [p.id, p]));
   for (const p of PECAS) {
     p.base = new THREE.Group(); p.base.position.x = p.x; cena.add(p.base);
-    const ped = new THREE.Mesh(new THREE.BoxGeometry(p.ped[0], 10, p.ped[1]), [matLado, matLado, matBaixo, matBaixo, matLado, matLado]); ped.position.y = -5.16; p.base.add(ped);
+    const ped = new THREE.Mesh(new THREE.BoxGeometry(p.ped[0], 10, p.ped[1]), [matCorpo, matCorpo, matBaixo, matBaixo, matCorpo, matCorpo]); ped.position.y = -5.22; p.base.add(ped);
+    const friso = new THREE.Mesh(new THREE.BoxGeometry(p.ped[0] + .07, .06, p.ped[1] + .07), matMadeiraLado); friso.position.y = -.19; p.base.add(friso); // moldura sob o tampo
     p.matTopo = matMadeira.clone(); // verniz próprio: some quando a câmera está em outro pedestal (de lado ele vira um reflexo cinza)
-    const tg = new THREE.BoxGeometry(p.ped[0] + .08, .16, p.ped[1] + .08), tampo = new THREE.Mesh(tg, [matMadeiraLado, matMadeiraLado, p.matTopo, matBaixo, matMadeiraLado, matMadeiraLado]); tampo.position.y = -.08; p.base.add(tampo);
+    const tg = new THREE.BoxGeometry(p.ped[0] + .14, .16, p.ped[1] + .14), tampo = new THREE.Mesh(tg, [matMadeiraLado, matMadeiraLado, p.matTopo, matBaixo, matMadeiraLado, matMadeiraLado]); tampo.position.y = -.08; p.base.add(tampo);
     { // cada tampo pega um trecho do veio; nas laterais o veio não estica (v na proporção da espessura)
       const uv = tg.attributes.uv, ox = (p.x * .13) % 1;
       for (let k = 0; k < uv.count; k++) { const lado = k < 8 || k >= 16; uv.setXY(k, uv.getX(k) * .5 + ox * .5, lado ? .3 + uv.getY(k) * .06 : uv.getY(k)); }
@@ -135,21 +157,21 @@ function iniciar() {
   {
     const X0 = -30, X1 = 50, Y0 = -10, Y1 = 20, Wc = 2048, Hc = 512, px = Wc / (X1 - X0), py = Hc / (Y1 - Y0);
     const t = tex(Wc, Hc, (g, w, h) => {
-      g.fillStyle = '#0e0d0c'; g.fillRect(0, 0, w, h);
+      g.fillStyle = '#1c1b1a'; g.fillRect(0, 0, w, h);
       for (const p of PECAS) {
         const cx = (p.x - X0) * px, cy = (Y1 - 2.2) * py;
         g.save(); g.translate(cx, cy); g.scale(1, 2.3);
-        const gr = g.createRadialGradient(0, 0, 0, 0, 0, 2.3 * px); gr.addColorStop(0, '#433d36'); gr.addColorStop(.5, '#221f1c'); gr.addColorStop(1, 'rgba(14,13,12,0)');
+        const gr = g.createRadialGradient(0, 0, 0, 0, 0, 2.3 * px); gr.addColorStop(0, '#57504a'); gr.addColorStop(.5, '#302c28'); gr.addColorStop(1, 'rgba(27,26,25,0)');
         g.fillStyle = gr; g.beginPath(); g.arc(0, 0, 2.3 * px, 0, Math.PI * 2); g.fill(); g.restore();
       }
     });
-    const parede = new THREE.Mesh(new THREE.PlaneGeometry(X1 - X0, Y1 - Y0), new THREE.MeshBasicMaterial({ map: t }));
+    const parede = new THREE.Mesh(new THREE.PlaneGeometry(X1 - X0, Y1 - Y0), new THREE.MeshBasicMaterial({ map: t, toneMapped: false })); // fora do ACES: o carvão sai como foi pintado
     parede.position.set((X0 + X1) / 2, (Y0 + Y1) / 2, -4.4); cena.add(parede); texParede = t;
   }
 
   // cálice: torno + punção na face da taça (ângulo 0 = de frente para +z)
   const CALICE_PUN = { ang: 0, y: 1.273, w: .22, h: .061, r: .345 };
-  const SATIN = { cor: 0xb6b3ac, rug: .3, linhas: 1 }; // estanho acetinado (cálice, caneca) como na foto da P34B
+  const SATIN = { cor: 0xbebbb4, rug: .23, linhas: 1 }; // estanho acetinado (cálice, caneca) como na foto da P34B
   function montaCalice(tp) {
     const g = caliceGeo(200); carimbar(g, CALICE_PUN);
     const m = new THREE.Mesh(g, estanho({ ...SATIN, punc: tp })); P.calice.giro.add(m); P.calice.malha = m;
@@ -170,13 +192,12 @@ function iniciar() {
   }
   function medir() {
     const H = innerHeight, top = el => el.getBoundingClientRect().top + scrollY;
-    const m = SECOES.marca, h = SECOES.historia, v = SECOES.vitrine, l = SECOES.loja;
-    Object.assign(ancoras, { H, m0: top(m), mh: m.offsetHeight - H, h0: top(h), hh: h.offsetHeight, v0: top(v), vh: v.offsetHeight - H, l0: top(l), f0: top(filme), fh: filme.offsetHeight });
-    const { m0, mh, h0, hh, v0, vh } = ancoras, M = movel;
-    const heroi = M ? enquadra(P.calice, { fill: .34, fillW: .5, sy: .27, el: .12 }) : enquadra(P.calice, { fill: .66, sx: .17, el: .1 });
+    const m = SECOES.marca, v = SECOES.vitrine, a = SECOES.acervo;
+    Object.assign(ancoras, { H, m0: top(m), mh: m.offsetHeight - H, v0: top(v), vh: v.offsetHeight - H, a0: top(a), f0: top(filme), fh: filme.offsetHeight });
+    const { m0, mh, v0, vh } = ancoras, M = movel;
+    const heroi = M ? enquadra(P.calice, { fill: .26, fillW: .46, sy: .27, el: .12 }) : enquadra(P.calice, { fill: .66, sx: .17, el: .1 });
     const close = M ? perto({ sy: .2 }) : perto({ sx: .11 });
     const fimMarca = M ? enquadra(P.calice, { fill: .4, fillW: .6, sy: .22, el: .1 }) : enquadra(P.calice, { fill: .6, sx: -.17, el: .08 });
-    const hist = M ? enquadra(P.calice, { fill: .32, sy: .3, el: .3, az: -.3 }) : enquadra(P.calice, { fill: .5, sx: .25, el: .26, az: -.35 });
     const para = id => M ? enquadra(P[id], id === 'galhetas' ? { fill: .55, fillW: .95, sy: .08, el: .14 } : { fill: id === 'caneca' ? .5 : .42, fillW: .78, sy: .07, el: .12 }) : enquadra(P[id], { fill: { galhetas: .5, caneca: .48 }[id] || .6, fillW: .5, sx: .14, el: .1 });
     trilho = [
       { s: 0, c: heroi },
@@ -185,7 +206,6 @@ function iniciar() {
       { s: m0 + .70 * mh, c: close },
       { s: m0 + .88 * mh, c: fimMarca },
       { s: m0 + mh + .15 * H, c: fimMarca },
-      { s: h0 + hh * .55, c: hist },
       { s: v0 + .12 * vh, c: para('jarra'), arco: 1 },
       { s: v0 + .34 * vh, c: para('jarra') },
       { s: v0 + .48 * vh, c: para('galhetas'), arco: 1 },
@@ -256,7 +276,7 @@ function iniciar() {
   const gl = new GLTFLoader(); gl.setMeshoptDecoder(MeshoptDecoder); const matsClaros = []; // materiais com o estúdio claro (giram junto com o ambiente)
   const carrega = url => new Promise((ok, err) => gl.load(url, ok, undefined, err));
   async function pecasDoScan() {
-    const matScan = estanho({ cor: 0xdedbd4, rug: .19, linhas: .3, env: 1, envMap: envClaro }), tp = tpP; matsClaros.push(matScan); // jarra e galhetas: prata clara e polida, como nas fotos
+    const matScan = estanho({ cor: 0xdedbd4, rug: .21, linhas: .3, env: 1, envMap: envClaro }), tp = tpP; matsClaros.push(matScan); // jarra e galhetas: prata clara e polida, como nas fotos
     const [jarra, galhetas, perfil] = await Promise.all([carrega('models/jarra.glb'), carrega('models/galhetas.glb'), fetch('models/caneca-perfil.json').then(r => r.json())]);
     const encaixa = (p, obj, altBruta) => { obj.traverse(o => { if (o.isMesh) { o.material = matScan; o.frustumCulled = true; } }); obj.scale.setScalar(p.alt / altBruta); p.giro.add(obj); };
     const altura = o => new THREE.Box3().setFromObject(o).getSize(new THREE.Vector3()).y;
@@ -288,8 +308,11 @@ function iniciar() {
     cabecalho(s);
     if (filme) { const rev = clamp((s + A.H - A.f0) / (A.H * .75)); filme.style.setProperty('--rev', reduz ? 1 : rev.toFixed(3)); }
     if (!R) return;
-    const vis = s < A.l0 + 2; // a seção da loja (fundo sólido) já cobre o palco
+    const vis = s < A.a0 + 2; // o acervo (fundo sólido) já cobre o palco
     if (!vis) { areaArrasto('off'); return; }
+    // peça e etiqueta somem juntas e terminam quando o topo do acervo encosta no pé da tela (no desktop, nada cruza o título que sobe)
+    const saida = movel ? 1 - rampa(s, A.a0 - A.H * .95, A.a0 - A.H * .6) : 1 - rampa(s, A.a0 - A.H * 1.3, A.a0 - A.H);
+    if (liberado && saida.toFixed(2) !== palco.dataset.o) { palco.dataset.o = saida.toFixed(2); const o = saida < 1 ? saida.toFixed(3) : ''; palco.style.opacity = o; fixoVit.style.opacity = o; fixoVit.style.pointerEvents = saida < .5 ? 'none' : ''; }
 
     // ---- parâmetros por trecho ----
     const { m0, mh, v0 } = A;
@@ -324,7 +347,7 @@ function iniciar() {
 
     // ---- peças: giro automático, arraste com inércia, cálice mirando a punção ----
     for (const p of PECAS) {
-      const visivel = Math.abs(p.x - camAtual.tx) < 9; if (!visivel) continue;
+      const visivel = Math.abs(p.x - camAtual.tx) < 9; if (!visivel) { p.base.visible = false; continue; }
       const solto = pegando === null || pecaArr !== p, ocioso = now - p.toque > 2400;
       if (solto) { p.ang += p.vel * dt; p.vel *= Math.exp(-2.6 * dt); }
       if (p.lim && solto) { const dev = p.ang - p.rot0; if (Math.abs(dev) > p.lim) { p.vel = 0; p.ang = lerp(p.ang, p.rot0 + Math.sign(dev) * p.lim, amortece(8, dt)); } }
@@ -337,6 +360,7 @@ function iniciar() {
         const alvo = Math.round(p.ang / (Math.PI * 2)) * Math.PI * 2; p.ang += (alvo - p.ang) * amortece(6 * wMira, dt); p.vel *= 1 - wMira;
       }
       p.giro.rotation.y = p.ang;
+      const parado = PECAS.some(q => Math.abs(q.x - camAtual.tx) < .3); p.base.visible = !parado || Math.abs(p.x - camAtual.tx) < .3;
       const dxc = Math.abs(p.x - camAtual.tx); p.matTopo.clearcoat = clamp(1.5 - dxc * .55, .1, 1); p.matTopo.envMapIntensity = clamp(.32 - dxc * .08, .06, .32); // nunca 0: não recompila
     }
 
@@ -348,8 +372,7 @@ function iniciar() {
     const pa = pecaAtiva || P.calice; longe.set(pa.x + lx * 1.5, pa.alt * .75 + ly * .7, 1.7);
     lanterna.position.copy(longe).lerp(v3, wPerto);
     lanterna.intensity = lerp(movel ? 1.2 : 1.6, .11, wPerto);
-    const hist = rampa(s, A.h0 - A.H * .3, A.h0 + A.hh * .3) * (1 - rampa(s, A.v0 - A.H * .4, A.v0));
-    cena.environmentIntensity = lerp(1, .55, wPerto) * (1 - hist * .3); LINHAS.value = 1 - wPerto * .85;
+    cena.environmentIntensity = lerp(1.22, .62, wPerto); LINHAS.value = 1 - wPerto * .85;
     chave.intensity = 1.3 * (1 - wPerto * .85); recorte.intensity = 2.0 * (1 - wPerto * .6);
     cena.environmentRotation.y = .5 + (movel ? Math.sin(now / 1000 * .2) * .25 : lx * .45); // no celular não gira com a rolagem (a janela ia para trás)
     for (const m of matsClaros) m.envMapRotation.y = cena.environmentRotation.y;

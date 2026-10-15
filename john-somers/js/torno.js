@@ -90,6 +90,12 @@ export function estanho({ cor = 0xb9b6af, rug = .3, linhas = 1, punc = null, env
     sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying float vYm;')
       .replace('#include <project_vertex>', '#include <project_vertex>\nvYm = (modelMatrix * vec4(transformed, 1.)).y;');
     sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying float vYm; uniform float uLinhas; uniform float uFreq; uniform float uLinhasG;')
+      .replace('#include <map_fragment>', `#ifdef USE_MAP
+          vec4 sampledDiffuseColor = texture2D( map, vMapUv );
+          float pequeno = smoothstep( .008, .022, fwidth( vMapUv.x ) ); // punção pequena na tela: menos contraste (de longe virava mancha)
+          sampledDiffuseColor.rgb = mix( sampledDiffuseColor.rgb, vec3( 1. ), pequeno * .75 );
+          diffuseColor *= sampledDiffuseColor;
+        #endif`)
       .replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>
         float fl = vYm * uFreq; float fadeL = (1. - smoothstep(.15, .45, fwidth(fl))) * uLinhasG;
         float hsh = fract(sin(floor(fl) * 91.7) * 43758.5453);
