@@ -105,35 +105,38 @@ function laco2D() { // sem WebGL: só a rolagem e o vídeo
 
 function iniciar() {
   R.outputColorSpace = THREE.SRGBColorSpace;
-  R.toneMapping = THREE.ACESFilmicToneMapping; R.toneMappingExposure = 1.12; // galeria clara, não breu
+  R.toneMapping = THREE.ACESFilmicToneMapping; R.toneMappingExposure = 1.4; // realça os brilhos do metal sem estourar
   R.setClearColor(0x151515, 1);
   const cena = new THREE.Scene();
   cena.fog = new THREE.Fog(0x151515, 10, 30);
   const cam = new THREE.PerspectiveCamera(28, 1, .04, 80);
 
   let envClaro = null;
-  // ---- estúdio para os reflexos: caixas de luz num quarto escuro (HDR via PMREM) ----
+  // ---- estúdio de joalheria (PMREM procedural): sala escura, faixas de softbox fortes e bandas escuras entre elas ----
+  // o contraste entre a faixa clara e a banda escura é o que faz o metal polido parecer polido; sala cinza uniforme = cinza fosco
   {
     const s = new THREE.Scene(), cx = new THREE.BoxGeometry(1, 1, 1);
-    const sala = new THREE.Mesh(cx, new THREE.MeshBasicMaterial({ color: 0x353330, side: THREE.BackSide })); sala.scale.set(30, 18, 30); s.add(sala); // sala carvão: reflexos claros e limpos
-    const L = (c, k, p, e) => { const m = new THREE.Mesh(cx, new THREE.MeshBasicMaterial({ color: new THREE.Color(c).multiplyScalar(k) })); m.position.set(...p); m.scale.set(...e); s.add(m); };
-    L(0xffffff, 7, [0, 8.5, 0], [12, .2, 6]);          // softbox de cima: o brilho longo nas peças
-    L(0xfff0dc, 6, [-14.5, 2, 2], [.2, 10, 3]);        // tira quente à esquerda
-    L(0xdfe8ff, 3, [14.5, 1.5, -3], [.2, 9, 2]);       // tira fria à direita
-    L(0xffffff, 1.1, [0, 3, -14.5], [14, 6, .2]);      // painel de fundo: contorno em ângulo rasante
-    L(0xffd9b0, 1.2, [0, .5, 14.5], [10, 3, .2]);      // rebatedor quente na frente
-    L(0xfff7ee, 3.4, [-8.5, 2.5, 12.5], [7, 8, 1]);    // janela grande à frente e à esquerda: a prata clara das fotos
-    L(0x2a2622, 1, [0, -8.8, 0], [30, .2, 30]);        // chão escuro: a base da peça "pesa"
-    const pm = new THREE.PMREMGenerator(R); cena.environment = pm.fromScene(s, .02).texture;
-    cena.environmentRotation.set(0, .5, 0);
-    // estúdio claro só para as peças polidas (jarra, galhetas): a sala clara das fotos de catálogo, senão o metal espelhado fica preto
-    sala.material.color.set(0x67635d);
-    envClaro = pm.fromScene(s, .02).texture; pm.dispose();
+    const sala = new THREE.Mesh(cx, new THREE.MeshBasicMaterial({ color: 0x242424, side: THREE.BackSide })); sala.scale.set(30, 18, 30); s.add(sala);
+    const L = (c, k, p, e, ry = 0) => { const m = new THREE.Mesh(cx, new THREE.MeshBasicMaterial({ color: new THREE.Color(c).multiplyScalar(k) })); m.position.set(...p); m.scale.set(...e); m.rotation.y = ry; s.add(m); };
+    L(0xffffff, 9, [0, 8.8, 0], [14, .2, 9]);                     // softbox de cima: o brilho longo no ombro das peças
+    L(0xffffff, 10, [-9.5, 1.5, 9.5], [7, 13, .3], Math.PI / 4);  // luz principal a 45° (frente-esquerda): a faixa branca larga no corpo
+    L(0xffffff, 5.5, [9.5, 1.5, 9.5], [5, 12, .3], -Math.PI / 4); // segunda softbox, frente-direita: o metal fica claro, não espelho preto
+    L(0xf1f5ff, 6, [13.5, 1.5, 1], [.3, 13, 3.2]);               // faixa lateral direita, fria: desenha o lado da alça
+    L(0xfff0e0, 4, [-13.5, 2, -3], [.3, 12, 2]);                 // faixa lateral esquerda, quente e estreita
+    L(0xffffff, 3, [-5, 3, -14.5], [2.4, 12, .3]);                // duas faixas de fundo: o contorno brilhante do bico e da alça
+    L(0xffffff, 3, [5, 3, -14.5], [2.4, 12, .3]);
+    L(0xffffff, 2.6, [3, -2, 14.5], [10, 3.5, .3]);               // rebatedor baixo na frente: a metade de baixo não morre
+    L(0x3a3632, 1, [0, -8.8, 0], [30, .2, 30]);                   // chão escuro: a base pesa
+    const pm = new THREE.PMREMGenerator(R); cena.environment = pm.fromScene(s, .015).texture; pm.dispose();
+    cena.environmentRotation.set(0, .35, 0);
+    envClaro = cena.environment; // um estúdio só para todas as peças
   }
-  const chave = new THREE.DirectionalLight(0xfff0dc, 1.6); chave.position.set(-4, 6, 5); cena.add(chave);
+  const chave = new THREE.DirectionalLight(0xffffff, 2.6); chave.position.set(-5, 5, 5); cena.add(chave); // luz principal branca a 45°
   const ceu = new THREE.HemisphereLight(0xfff4e8, 0x1c1a18, .6); cena.add(ceu); // luz ambiente difusa da galeria (madeira e pedestais)
-  const recorte = new THREE.DirectionalLight(0xcbd8ff, 2.0); recorte.position.set(5, 3, -6); cena.add(recorte);
+  const recorte = new THREE.DirectionalLight(0xa9c4ff, 1.6); recorte.position.set(6, 2.5, -5); cena.add(recorte);     // recorte frio, atrás à direita
+  const recorteQ = new THREE.DirectionalLight(0xffc9a0, 1.3); recorteQ.position.set(-6, 2.5, -5); cena.add(recorteQ); // recorte quente, atrás à esquerda
   const lanterna = new THREE.PointLight(0xfff1df, 0, 0, 2); cena.add(lanterna);
+  const preenche = new THREE.DirectionalLight(0xfff6ec, 0); preenche.position.set(0, 3, 8); cena.add(preenche); // só no close: luz mínima para os três escudos lerem sempre
 
   // ---- texturas utilitárias (canvas) ----
   const tex = (w, h, f, srgb = true) => { const c = document.createElement('canvas'); c.width = w; c.height = h; f(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); if (srgb) t.colorSpace = THREE.SRGBColorSpace; return t; };
@@ -141,10 +144,10 @@ function iniciar() {
   const texSombra = tex(256, 256, (g, w, h) => { const gr = g.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2); gr.addColorStop(0, 'rgba(0,0,0,.96)'); gr.addColorStop(.3, 'rgba(0,0,0,.66)'); gr.addColorStop(.62, 'rgba(0,0,0,.22)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = gr; g.fillRect(0, 0, w, h); }, false);
   const texMadeira = new THREE.TextureLoader().load('img/madeira.webp', t => R.initTexture(t)); texMadeira.colorSpace = THREE.SRGBColorSpace; texMadeira.anisotropy = Math.min(8, R.capabilities.getMaxAnisotropy());
   const matBaixo = new THREE.MeshBasicMaterial({ color: 0x151515 });
-  const matCorpo = new THREE.MeshStandardMaterial({ map: texMadeira, color: 0x3a2219, roughness: .55, metalness: 0, envMapIntensity: .35 }); // corpo do pedestal em mogno
+  const matCorpo = new THREE.MeshStandardMaterial({ map: texMadeira, color: 0x3a2219, roughness: .55, metalness: 0, envMapIntensity: .14 }); // corpo do pedestal em mogno
   // tampo de madeira escura envernizada (o verniz é o reflexo; o veio só aparece de perto)
   const matMadeira = new THREE.MeshPhysicalMaterial({ map: texMadeira, color: 0x5a3426, roughness: .5, metalness: 0, clearcoat: 1, clearcoatRoughness: .22, envMapIntensity: .45 }); // mogno avermelhado, como nas fotos
-  const matMadeiraLado = new THREE.MeshStandardMaterial({ map: texMadeira, color: 0x46281d, roughness: .6, metalness: 0, envMapIntensity: .3 }); // de lado o verniz virava uma caixa cinza
+  const matMadeiraLado = new THREE.MeshStandardMaterial({ map: texMadeira, color: 0x46281d, roughness: .6, metalness: 0, envMapIntensity: .12 }); // de lado o verniz virava uma caixa cinza
   const matSombra = new THREE.MeshBasicMaterial({ map: texSombra, transparent: true, depthWrite: false, toneMapped: false });
   const tpP = texturasPuncao(R); let texParede = null; // texturas da punção: já existem (neutras) e se completam sozinhas
 
@@ -213,7 +216,7 @@ function iniciar() {
 
   // cálice: torno + punção na face da taça (ângulo 0 = de frente para +z)
   const CALICE_PUN = { ang: 0, y: 1.273, w: .22, h: .061, r: .345 };
-  const SATIN = { cor: 0xcccccc, rug: .22, linhas: 1 }; // estanho acetinado (cálice, caneca) como na foto da P34B
+  const SATIN = { cor: 0xe8e8e8, rug: .15, linhas: 0 }; // estanho claro polido de joalheria (pedido): sem sulcos, que davam o granulado
   function montaCalice(tp) {
     const g = caliceGeo(200); carimbar(g, CALICE_PUN);
     const m = new THREE.Mesh(g, estanho({ ...SATIN, punc: tp })); P.calice.giro.add(m); P.calice.malha = m;
@@ -287,7 +290,7 @@ function iniciar() {
     const w = canvas.clientWidth || innerWidth, h = canvas.clientHeight || innerHeight;
     movel = ehMovel(); html.classList.toggle('toque', movel);
     const orc = movel ? 2.0e6 : 2.4e6;
-    dprAlvo = Math.min(devicePixelRatio || 1, 2, Math.sqrt(orc / (w * h)));
+    dprAlvo = Math.min(devicePixelRatio || 1, 2); // nitidez de tela retina/4K (a resolução adaptativa protege a GPU fraca)
     R.setPixelRatio(dprAlvo * qa); R.setSize(w, h, false);
     W = w; H = h; cam.aspect = w / h; cam.fov = w / h < .8 ? 34 : 28; cam.updateProjectionMatrix();
     medir();
@@ -348,7 +351,7 @@ function iniciar() {
   const gl = new GLTFLoader(); gl.setMeshoptDecoder(MeshoptDecoder); const matsClaros = []; // materiais com o estúdio claro (giram junto com o ambiente)
   const carrega = url => new Promise((ok, err) => gl.load(url, ok, undefined, err));
   async function pecasDoScan() {
-    const matScan = estanho({ cor: 0xdedbd4, rug: .22, linhas: .3, env: 1, envMap: envClaro }), tp = tpP; matsClaros.push(matScan); // jarra e galhetas: prata clara e polida, como nas fotos
+    const matScan = estanho({ ...SATIN, env: 1, envMap: envClaro }), tp = tpP; matsClaros.push(matScan); // jarra e galhetas: prata clara e polida, como nas fotos
     const [jarra, galhetas, perfil] = await Promise.all([carrega('models/jarra.glb'), carrega('models/galhetas.glb'), fetch('models/caneca-perfil.json').then(r => r.json())]);
     const encaixa = (p, obj, altBruta) => { obj.traverse(o => { if (o.isMesh) { o.material = matScan; o.frustumCulled = true; } }); obj.scale.setScalar(p.alt / altBruta); p.giro.add(obj); };
     const altura = o => new THREE.Box3().setFromObject(o).getSize(new THREE.Vector3()).y;
@@ -358,7 +361,7 @@ function iniciar() {
     // caneca: corpo no torno (perfil do scan) + alça do scan, mesma escala
     const corpo = canecaGeo(perfil, P.caneca.alt, 200); carimbar(corpo, { ang: .25, y: .83, w: .32, h: .089 }); // com rot0 −.6 a alça vem uns 35° para a câmera e a punção fica à esquerda, como na foto a punção fica à esquerda e a alça a 3/4, como na foto
     // caneca inteira no estúdio claro: a face da fita olhava para o lado escuro da sala e a alça saía preta
-    const matCorpo = estanho({ ...SATIN, punc: tp, envMap: envClaro, env: 1.15 }), matAlca = estanho({ ...SATIN, linhas: .4, envMap: envClaro, env: 1.25 }); matsClaros.push(matCorpo, matAlca);
+    const matCorpo = estanho({ ...SATIN, punc: tp, envMap: envClaro, env: 1 }), matAlca = estanho({ ...SATIN, envMap: envClaro, env: 1 }); matsClaros.push(matCorpo, matAlca);
     P.caneca.giro.add(new THREE.Mesh(corpo, matCorpo));
     P.caneca.giro.add(alcaP34B(perfil, P.caneca.alt, matAlca)); // a alça da P34B (o scan tinha inventado outra)
     // aquece: compila e sobe a geometria antes de a pessoa chegar na vitrine (nada novo na hora da rolagem)
@@ -424,7 +427,7 @@ function iniciar() {
       lx += (sw - lx) * kl; ly += ((wPerto > 0 ? .1 : .25) - ly) * kl;
     }
     const par = reduz || movel ? 0 : 1 - wPerto * .6;
-    if (!pecaArr || Math.abs(s - zoomS) > A.H * .18) zoomAlvo = 1;
+    if (!pecaArr || Math.abs(s - zoomS) > 12) zoomAlvo = 1; // qualquer rolagem desfaz o zoom
     zoom += (zoomAlvo - zoom) * (reduz ? 1 : amortece(7, dt));
     const iz = 1 / zoom;
     cam.position.set(camAtual.tx + (camAtual.px + lx * .05 * par - camAtual.tx) * iz, camAtual.ty + (camAtual.py + ly * .035 * par - camAtual.ty) * iz, camAtual.tz + (camAtual.pz - camAtual.tz) * iz);
@@ -454,7 +457,7 @@ function iniciar() {
       p.ergue.position.y = p.mao + p.lift; p.ergue.rotation.z = p.inc;
       const k = Math.min(1.2, p.lift / .05); p.sombra.scale.set(p.som[0] * (1 + k * .22), p.som[1] * (1 + k * .22), 1); p.somMat.opacity = 1 - k * .45;
       const parado = PECAS.some(q => Math.abs(q.x - camAtual.tx) < .3); p.base.visible = !parado || Math.abs(p.x - camAtual.tx) < .3;
-      const dxc = Math.abs(p.x - camAtual.tx); p.matTopo.clearcoat = movel ? 0 : clamp(1.5 - dxc * .55, .1, 1); p.matTopo.envMapIntensity = clamp(.32 - dxc * .08, .06, .32) * (movel ? .6 : 1); // celular: câmera rasante, o verniz virava placa cinza // nunca 0: não recompila
+      const dxc = Math.abs(p.x - camAtual.tx); p.matTopo.clearcoat = movel ? 0 : clamp(1.5 - dxc * .55, .1, 1) * .45; p.matTopo.envMapIntensity = clamp(.14 - dxc * .04, .04, .14); // o estúdio de joalheria é forte: o verniz do tampo reflete pouco para continuar mogno // celular: câmera rasante, o verniz virava placa cinza // nunca 0: não recompila
     }
 
     areaArrasto(pecaArr);
@@ -469,9 +472,9 @@ function iniciar() {
     const pa = pecaAtiva || P.calice; longe.set(pa.x + lx * 1.5, pa.alt * .75 + ly * .7, 1.7);
     lanterna.position.copy(longe).lerp(v3, wPerto);
     lanterna.intensity = lerp(movel ? 1.2 : 1.6, .11, wPerto);
-    cena.environmentIntensity = lerp(1.22, .62, wPerto); LINHAS.value = 1 - wPerto * .85;
-    chave.intensity = 1.3 * (1 - wPerto * .85); recorte.intensity = 2.0 * (1 - wPerto * .6);
-    cena.environmentRotation.y = .5 + (movel ? Math.sin(now / 1000 * .2) * .25 : lx * .45); // no celular não gira com a rolagem (a janela ia para trás)
+    cena.environmentIntensity = lerp(1, .35, wPerto); preenche.intensity = 1.3 * wPerto; // no close a lanterna rasante faz o relevo; o estúdio quase apaga (a faixa clara passava atrás do texto) LINHAS.value = 1 - wPerto * .85;
+    chave.intensity = 2.6 * (1 - wPerto * .85); recorte.intensity = 1.6 * (1 - wPerto * .6); recorteQ.intensity = 1.3 * (1 - wPerto * .6);
+    cena.environmentRotation.y = .35 + (movel ? Math.sin(now / 1000 * .2) * .25 : lx * .45) + wPerto * Math.PI; // no close o estúdio gira: a punção reflete as faixas de fundo, fracas, e não a softbox principal que satura
     for (const m of matsClaros) m.envMapRotation.y = cena.environmentRotation.y;
 
     // ---- resolução adaptativa (o quadro parado e em movimento ficam iguais) ----

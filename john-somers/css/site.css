@@ -88,7 +88,7 @@ section{position:relative}
 
 /* 2. marca */
 .marca-txt{position:absolute;left:var(--borda);top:50%;transform:translateY(-50%);max-width:400px;opacity:0;transition:opacity .7s}
-.marca-txt::before{content:"";position:absolute;inset:-28% -34% -28% -60%;background:radial-gradient(closest-side,rgba(20,20,20,.84),rgba(20,20,20,0));z-index:-1;pointer-events:none}
+.marca-txt::before{content:"";position:absolute;inset:-45% -40% -45% -70%;background:radial-gradient(closest-side,rgba(16,16,16,.93) 55%,rgba(16,16,16,0));z-index:-1;pointer-events:none}
 #marca[data-f="perto"] .marca-txt{opacity:1}
 @media (max-width:820px){.marca-txt{top:auto;bottom:max(10vh,70px);transform:none;right:var(--borda);max-width:none}}
 

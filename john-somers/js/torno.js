@@ -82,8 +82,8 @@ export function texturasPuncao(renderer) {
 // estanho: metal com sulcos finos de torno (rugosidade e normal variando com a altura, somem de longe)
 // e a punção opcional (normal map que se apaga em ângulo rasante, para não serrilhar quando a peça gira)
 export const LINHAS = { value: 1 }; // multiplicador global dos sulcos (o close da punção baixa)
-export function estanho({ cor = 0xb9b6af, rug = .22, linhas = 1, punc = null, env = 1, envMap = null } = {}) {
-  const m = new THREE.MeshPhysicalMaterial({ color: cor, metalness: 1, roughness: rug, clearcoat: .3, clearcoatRoughness: .1, envMapIntensity: env, envMap }); // o estanho do pedido: Physical, metal 1, rugosidade .22, verniz .3/.1
+export function estanho({ cor = 0xe8e8e8, rug = .15, linhas = 0, punc = null, env = 1, envMap = null } = {}) {
+  const m = new THREE.MeshPhysicalMaterial({ color: cor, metalness: 1, roughness: rug, clearcoat: 1, clearcoatRoughness: .05, reflectivity: 1, envMapIntensity: env, envMap }); // estanho de joalheria (pedido): metal 1, rugosidade .15, verniz 1/.05
   if (punc) { m.normalMap = punc.nrm; m.normalScale.set(1, 1); m.map = punc.cor; m.roughnessMap = punc.rug; m.roughness = rug / .32; } // o mapa da punção tem a superfície em .32: a rugosidade final da superfície fica = rug
   m.onBeforeCompile = sh => {
     sh.uniforms.uLinhas = { value: linhas }; sh.uniforms.uFreq = { value: 1100 }; sh.uniforms.uLinhasG = LINHAS;
