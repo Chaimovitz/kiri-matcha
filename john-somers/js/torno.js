@@ -81,34 +81,52 @@ export function texturasPuncao(renderer) {
 
 // estanho: metal com sulcos finos de torno (rugosidade e normal variando com a altura, somem de longe)
 // e a punção opcional (normal map que se apaga em ângulo rasante, para não serrilhar quando a peça gira)
-export const LINHAS = { value: 1 }; // multiplicador global dos sulcos (o close da punção baixa)
-export function estanho({ cor = 0xe8e8e8, rug = .15, linhas = 0, punc = null, env = 1, envMap = null } = {}) {
-  const m = new THREE.MeshPhysicalMaterial({ color: cor, metalness: 1, roughness: rug, clearcoat: 1, clearcoatRoughness: .05, reflectivity: 1, envMapIntensity: env, envMap }); // estanho de joalheria (pedido): metal 1, rugosidade .15, verniz 1/.05
+export const LINHAS = { value: 1 }; // multiplicador global do martelado (o close da punção baixa)
+// estanho artesanal: metal .85 com rugosidade .28 (acetinado nas transições, brilho denso e suave), sem verniz,
+// e micro-marcas de martelo: ruído 3D na posição do objeto que inclina a normal (amplitude .015) e varia a rugosidade.
+// O ruído é calculado em espaço do objeto (gira junto com a peça) e some quando fica menor que um pixel (sem granulado).
+export function estanho({ cor = 0xe2dfd9, rug = .28, metal = .85, martelo = 1, punc = null, env = 1, envMap = null, escala = 1 } = {}) {
+  const m = new THREE.MeshPhysicalMaterial({ color: cor, metalness: metal, roughness: rug, clearcoat: 0, reflectivity: .5, envMapIntensity: env, envMap });
   if (punc) { m.normalMap = punc.nrm; m.normalScale.set(1, 1); m.map = punc.cor; m.roughnessMap = punc.rug; m.roughness = rug / .32; } // o mapa da punção tem a superfície em .32: a rugosidade final da superfície fica = rug
   m.onBeforeCompile = sh => {
-    sh.uniforms.uLinhas = { value: linhas }; sh.uniforms.uFreq = { value: 1100 }; sh.uniforms.uLinhasG = LINHAS;
-    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying float vYm;')
-      .replace('#include <project_vertex>', '#include <project_vertex>\nvYm = (modelMatrix * vec4(transformed, 1.)).y;');
-    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying float vYm; uniform float uLinhas; uniform float uFreq; uniform float uLinhasG;')
+    sh.uniforms.uMart = { value: martelo }; sh.uniforms.uMartG = LINHAS; sh.uniforms.uEsc = { value: 38 / escala };
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vPo;')
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvPo = transformed;');
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', `#include <common>
+        varying vec3 vPo; uniform float uMart, uMartG, uEsc; uniform mat4 modelMatrix; // o three já envia a modelMatrix por objeto
+        // ruído de valor 3D com derivadas analíticas (gradiente para inclinar a normal)
+        float h3(vec3 p) { p = fract(p * .3183099 + .1); p *= 17.; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }
+        vec4 ruido(vec3 x) {
+          vec3 i = floor(x), f = fract(x), u = f * f * (3. - 2. * f), du = 6. * f * (1. - f);
+          float a = h3(i), b = h3(i + vec3(1,0,0)), c = h3(i + vec3(0,1,0)), d = h3(i + vec3(1,1,0)),
+                e = h3(i + vec3(0,0,1)), g = h3(i + vec3(1,0,1)), hh = h3(i + vec3(0,1,1)), k = h3(i + vec3(1,1,1));
+          float k1 = b - a, k2 = c - a, k3 = e - a, k4 = a - b - c + d, k5 = a - c - e + hh, k6 = a - b - e + g, k7 = -a + b + c - d + e - g - hh + k;
+          float v = a + k1 * u.x + k2 * u.y + k3 * u.z + k4 * u.x * u.y + k5 * u.y * u.z + k6 * u.z * u.x + k7 * u.x * u.y * u.z;
+          vec3 dv = du * vec3(k1 + k4 * u.y + k6 * u.z + k7 * u.y * u.z, k2 + k5 * u.z + k4 * u.x + k7 * u.z * u.x, k3 + k6 * u.x + k5 * u.y + k7 * u.x * u.y);
+          return vec4(v, dv);
+        }`)
       .replace('#include <map_fragment>', `#ifdef USE_MAP
           vec4 sampledDiffuseColor = texture2D( map, vMapUv );
           float pequeno = smoothstep( .008, .022, fwidth( vMapUv.x ) ); // punção pequena na tela: menos contraste (de longe virava mancha)
           sampledDiffuseColor.rgb = mix( sampledDiffuseColor.rgb, vec3( 1. ), pequeno * .75 );
+          sampledDiffuseColor.rgb = vec3( dot( sampledDiffuseColor.rgb, vec3( .2126, .7152, .0722 ) ) ); // o fundo dos escudos é estanho escurecido, cinza (colorido saía bronze)
           diffuseColor *= sampledDiffuseColor;
         #endif`)
       .replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>
-        float fl = vYm * uFreq; float fadeL = (1. - smoothstep(.15, .45, fwidth(fl))) * uLinhasG;
-        float hsh = fract(sin(floor(fl) * 91.7) * 43758.5453);
-        roughnessFactor = clamp(roughnessFactor * (1. + uLinhas * fadeL * (hsh - .5) * .16), .06, 1.);`)
+        vec3 pm = vPo * uEsc;
+        float fadeM = (1. - smoothstep(.35, .9, length(fwidth(pm)))) * uMart * uMartG; // marca menor que um pixel: some (não chia)
+        vec4 n1 = ruido(pm), n2 = ruido(pm * 2.7 + 11.3);
+        vec4 nm = n1 * .7 + n2 * vec4(.3, .81, .81, .81);
+        roughnessFactor = clamp(roughnessFactor + (nm.x - .5) * .06 * fadeM, .04, 1.); // polimento irregular: o brilho varia de leve`)
       .replace('#include <normal_fragment_maps>', `#include <normal_fragment_maps>
         #ifdef USE_NORMALMAP
           float rasante = smoothstep(.16, .5, abs(dot(nonPerturbedNormal, normalize(vViewPosition))));
           normal = normalize(mix(nonPerturbedNormal, normal, rasante));
         #endif
-        vec3 cimaV = normalize((viewMatrix * vec4(0., 1., 0., 0.)).xyz);
-        normal = normalize(normal + cimaV * sin(fl * 6.2832) * uLinhas * .0035 * fadeL);`);
+        vec3 gV = normalize((viewMatrix * modelMatrix * vec4(nm.yzw, 0.)).xyz) * length(nm.yzw);
+        normal = normalize(normal - (gV - dot(gV, normal) * normal) * .015 * fadeM); // micro-marcas de martelo (amplitude .015)`);
   };
-  m.customProgramCacheKey = () => 'estanho' + (punc ? 'p' : '');
+  m.customProgramCacheKey = () => 'estanho-art' + (punc ? 'p' : '');
   return m;
 }
 
