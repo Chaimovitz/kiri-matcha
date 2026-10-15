@@ -12,7 +12,7 @@
 <meta property="og:image" content="https://chaimovitz.github.io/kiri-matcha/john-somers/img/og.jpg">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#161616">
+<meta name="theme-color" content="#131313">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%225%22 fill=%22%230b0b0a%22/%3E%3Cpath d=%22M9 9l14 14M23 9L9 23%22 stroke=%22%23cbc8c1%22 stroke-width=%223.2%22/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
@@ -32,7 +32,12 @@
 
 <div id="palco" aria-hidden="true"><canvas id="gl"></canvas><div class="vinheta"></div></div>
 <div id="arrasto" aria-hidden="true"></div>
+<div id="espera" aria-hidden="true"><svg viewBox="0 0 370 714" preserveAspectRatio="xMidYMid meet"><defs><linearGradient id="esp-m" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#3d3b38"/><stop offset=".28" stop-color="#a9a59d"/><stop offset=".5" stop-color="#5d5a55"/><stop offset=".76" stop-color="#c9c5bc"/><stop offset="1" stop-color="#46443f"/></linearGradient><linearGradient id="esp-b" x1="0" x2="1" y1="0" y2=".25"><stop offset=".35" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff8ee" stop-opacity=".55"/><stop offset=".65" stop-color="#fff" stop-opacity="0"/><animateTransform attributeName="gradientTransform" type="translate" values="-1 0;1 0" dur="1.8s" repeatCount="indefinite"/></linearGradient></defs><path d="M185 714 L335 714 L345 710 L345 695 L335 684 L313 672 L281 659 L247 646 L232 630 L225 615 L221 600 L221 570 L223 555 L231 525 L237 510 L243 495 L248 480 L245 465 L238 450 L227 435 L223 420 L225 405 L238 390 L243 375 L280 360 L299 345 L313 330 L321 315 L327 300 L331 285 L335 270 L339 240 L343 210 L347 165 L351 135 L355 90 L360 75 L365 45 L368 30 L370 17 L367 6 L361 0 L9 0 L3 6 L0 17 L2 30 L5 45 L10 75 L15 90 L19 135 L23 165 L27 210 L31 240 L35 270 L39 285 L43 300 L49 315 L57 330 L71 345 L90 360 L127 375 L132 390 L145 405 L147 420 L143 435 L132 450 L125 465 L122 480 L127 495 L133 510 L139 525 L147 555 L149 570 L149 600 L145 615 L138 630 L123 646 L89 659 L57 672 L35 684 L25 695 L25 710 L35 714 L185 714 Z" fill="url(#esp-m)"/><path d="M185 714 L335 714 L345 710 L345 695 L335 684 L313 672 L281 659 L247 646 L232 630 L225 615 L221 600 L221 570 L223 555 L231 525 L237 510 L243 495 L248 480 L245 465 L238 450 L227 435 L223 420 L225 405 L238 390 L243 375 L280 360 L299 345 L313 330 L321 315 L327 300 L331 285 L335 270 L339 240 L343 210 L347 165 L351 135 L355 90 L360 75 L365 45 L368 30 L370 17 L367 6 L361 0 L9 0 L3 6 L0 17 L2 30 L5 45 L10 75 L15 90 L19 135 L23 165 L27 210 L31 240 L35 270 L39 285 L43 300 L49 315 L57 330 L71 345 L90 360 L127 375 L132 390 L145 405 L147 420 L143 435 L132 450 L125 465 L122 480 L127 495 L133 510 L139 525 L147 555 L149 570 L149 600 L145 615 L138 630 L123 646 L89 659 L57 672 L35 684 L25 695 L25 710 L35 714 L185 714 Z" fill="url(#esp-b)"/></svg></div>
+<script>/* silhueta metálica no lugar exato do cálice enquanto o 3D carrega (mesma conta de enquadramento do app.js) */
+(function(){var e=document.getElementById("espera");function p(){var W=innerWidth,H=innerHeight,m=W<=820||matchMedia("(hover: none) and (pointer: coarse)").matches,a=W/H,t=Math.tan((a<.8?34:28)*Math.PI/360),f=m?.26:.66,fw=m?.46:.8,sx=m?0:.17,sy=m?.27:0,dH=(1.45/f)/(2*t),dW=(.78/fw)/(2*t*a),d=Math.max(dH,dW),h=1.45/(2*d*t)*H*1.02,w=h*370/714;e.style.cssText="left:"+((.5+sx)*W-w/2)+"px;top:"+((.5-sy)*H-h/2)+"px;width:"+w+"px;height:"+h+"px"}p();addEventListener("resize",p)})();</script>
 
+
+<a id="wa" class="wa" href="https://wa.me/5532999096000" target="_blank" rel="noopener" aria-label="Falar com a loja no WhatsApp"><svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M16 3.2A12.8 12.8 0 0 0 5 22.5L3.3 28.7l6.4-1.7A12.8 12.8 0 1 0 16 3.2Zm0 23.3c-2 0-3.9-.5-5.6-1.5l-.4-.2-3.8 1 1-3.7-.3-.4A10.6 10.6 0 1 1 16 26.5Zm5.8-7.9c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2l-1 1.2c-.2.2-.4.2-.7.1a8.7 8.7 0 0 1-4.3-3.8c-.3-.6.3-.5.9-1.7.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.8s1.2 3.3 1.4 3.5c.2.2 2.4 3.7 5.8 5.1 2.2.9 3 1 4.1.8.7-.1 1.9-.8 2.2-1.5.3-.8.3-1.4.2-1.5l-.6-.3Z"/></svg><span class="wa-txt"><small>WhatsApp</small><span class="wa-peca">Cálice P105D</span></span></a>
 <main>
 <!-- 1. abertura: o cálice -->
 <section id="abertura" class="tela">
@@ -44,7 +49,7 @@
    <div><dt>INPI</dt><dd>Indicação de Procedência do estanho de São João del-Rei</dd></div>
   </dl>
  </div>
- <p class="dica so-mouse">Mova o mouse sobre o cálice: a luz acompanha</p><p class="dica so-toque">Role para ver a punção de perto</p>
+ <p class="dica so-mouse">Arraste o cálice para girar · duplo clique aproxima · a luz segue o mouse</p><p class="dica so-toque">Role para ver a punção de perto</p>
 </section>
 
 <!-- 2. a marca no metal: mergulho na punção do cálice -->
@@ -53,7 +58,7 @@
   <div class="marca-txt">
    <h2>A marca no metal</h2>
    <p class="t so-mouse">As peças saem da fábrica com a punção JS ✕ MG batida no estanho. Passe o mouse: a luz rasante revela o relevo.</p>
-   <p class="t so-toque">As peças saem da fábrica com a punção JS ✕ MG batida no estanho. Role devagar: a luz passa rasante e revela o relevo.</p>
+   <p class="t so-toque">As peças saem da fábrica com a punção JS ✕ MG batida no estanho. Role devagar ou incline o celular: a luz passa rasante e revela o relevo.</p>
   </div>
   <article class="etiqueta" data-peca="calice">
    <img class="foto3d" src="img/calice.webp" alt="" loading="lazy" decoding="async">
@@ -61,7 +66,7 @@
    <p class="ref">P105D</p>
    <ul class="ficha"><li>14,5 cm de altura</li><li>180 ml</li><li>340 g</li></ul>
    <p class="preco">R$ 396,50</p>
-   <div class="acoes"><a class="btn" href="https://www.johnsomers.com.br/mesa/calice-para-vinho-p105d" target="_blank" rel="noopener">Comprar na loja</a><a class="btn o" data-wa="Cálice para vinho P105D" href="https://wa.me/5532999096000" target="_blank" rel="noopener"><span class="pc">Perguntar no</span>WhatsApp</a></div>
+   <div class="acoes"><a class="btn" href="https://www.johnsomers.com.br/mesa/calice-para-vinho-p105d" target="_blank" rel="noopener">Comprar na loja</a></div>
   </article>
  </div>
 </section>
@@ -69,14 +74,14 @@
 <!-- 3. destaques em 3D: a câmera anda entre os pedestais -->
 <section id="vitrine" class="pin" style="--h:620">
  <div class="fixo">
-  <header class="vit-cab"><h2>Destaques em 3D</h2><p class="t so-mouse">Arraste a peça para girar. Preço e compra direto na loja oficial.</p><p class="t so-toque">Deslize a peça para os lados para girar. Preço e compra direto na loja oficial.</p></header>
+  <header class="vit-cab"><h2>Destaques em 3D</h2><p class="t so-mouse">Arraste a peça para girar e dê duplo clique para aproximar. Preço e compra direto na loja oficial.</p><p class="t so-toque">Deslize a peça para girar e use a pinça para aproximar. Preço e compra direto na loja oficial.</p></header>
   <article class="etiqueta" data-peca="jarra">
    <img class="foto3d" src="img/jarra.webp" alt="Jarra para vinho em estanho" loading="lazy" decoding="async">
    <h3>Jarra para vinho</h3>
    <p class="ref">P437</p>
    <ul class="ficha"><li>21 cm de altura</li><li>1 litro</li><li>1,12 kg</li></ul>
    <p class="preco">R$ 1.913,60</p>
-   <div class="acoes"><a class="btn" href="https://www.johnsomers.com.br/mesa/jarra-para-vinho-p437" target="_blank" rel="noopener">Comprar na loja</a><a class="btn o" data-wa="Jarra para vinho P437" href="https://wa.me/5532999096000" target="_blank" rel="noopener"><span class="pc">Perguntar no</span>WhatsApp</a></div>
+   <div class="acoes"><a class="btn" href="https://www.johnsomers.com.br/mesa/jarra-para-vinho-p437" target="_blank" rel="noopener">Comprar na loja</a></div>
   </article>
   <article class="etiqueta" data-peca="galhetas">
    <img class="foto3d" src="img/galhetas.webp" alt="Conjunto de galhetas com bandeja em estanho" loading="lazy" decoding="async">
@@ -84,7 +89,7 @@
    <p class="ref">P506</p>
    <ul class="ficha"><li>2 galhetas de 80 ml</li><li>13,5 cm de altura</li><li>bandeja com vidro</li></ul>
    <p class="preco">R$ 700,00</p>
-   <div class="acoes"><a class="btn" href="https://www.johnsomers.com.br/pecas-sacras/conjunto-de-galhatas" target="_blank" rel="noopener">Comprar na loja</a><a class="btn o" data-wa="Conjunto de galhetas P506" href="https://wa.me/5532999096000" target="_blank" rel="noopener"><span class="pc">Perguntar no</span>WhatsApp</a></div>
+   <div class="acoes"><a class="btn" href="https://www.johnsomers.com.br/pecas-sacras/conjunto-de-galhatas" target="_blank" rel="noopener">Comprar na loja</a></div>
   </article>
   <article class="etiqueta" data-peca="caneca">
    <img class="foto3d" src="img/caneca-p34b.webp" alt="Caneca inglesa de estanho P34B" loading="lazy" decoding="async">
@@ -92,7 +97,7 @@
    <p class="ref">P34B</p>
    <ul class="ficha"><li>11,2 cm de altura</li><li>500 ml</li><li>480 g</li></ul>
    <p class="preco">R$ 796,80</p>
-   <div class="acoes"><a class="btn" href="https://www.johnsomers.com.br/mesa/caneca-para-cerveja-1-pint-568ml-p34b" target="_blank" rel="noopener">Comprar na loja</a><a class="btn o" data-wa="Caneca inglesa P34B" href="https://wa.me/5532999096000" target="_blank" rel="noopener"><span class="pc">Perguntar no</span>WhatsApp</a></div>
+   <div class="acoes"><a class="btn" href="https://www.johnsomers.com.br/mesa/caneca-para-cerveja-1-pint-568ml-p34b" target="_blank" rel="noopener">Comprar na loja</a></div>
   </article>
   <ol class="trilha" aria-hidden="true"><li data-i="0"></li><li data-i="1"></li><li data-i="2"></li></ol>
   <p class="nota">Preços da loja online em 14/10/2026.</p>
@@ -110,7 +115,7 @@
  </header>
  <div class="obras">
   <article class="obra" data-cat="mesa">
-   <figure class="obra-foto"><img src="img/acervo/P172.webp" alt="Jarra flamenga em estanho sobre pedestal de madeira" width="1000" height="1250" loading="lazy" decoding="async"></figure>
+   <figure class="obra-foto"><img src="img/acervo/P172-600.webp" srcset="img/acervo/P172-600.webp 600w, img/acervo/P172.webp 1000w" sizes="(max-width:640px) 46vw, (max-width:1180px) 30vw, 250px" alt="Jarra flamenga em estanho sobre pedestal de madeira" width="1000" height="1250" loading="lazy" decoding="async"></figure>
    <div class="obra-txt">
     <h3>Jarra flamenga</h3>
     <p class="obra-ref"><span>P172</span><span>2,2 litros</span><span>21,5 cm de altura</span></p>
@@ -119,7 +124,7 @@
    </div>
   </article>
   <article class="obra" data-cat="bar">
-   <figure class="obra-foto"><img src="img/acervo/P168.webp" alt="Balde de gelo com alças de leão em estanho sobre pedestal de madeira" width="1000" height="1250" loading="lazy" decoding="async"></figure>
+   <figure class="obra-foto"><img src="img/acervo/P168-600.webp" srcset="img/acervo/P168-600.webp 600w, img/acervo/P168.webp 1000w" sizes="(max-width:640px) 46vw, (max-width:1180px) 30vw, 250px" alt="Balde de gelo com alças de leão em estanho sobre pedestal de madeira" width="1000" height="1250" loading="lazy" decoding="async"></figure>
    <div class="obra-txt">
     <h3>Balde de gelo com alças de leão</h3>
     <p class="obra-ref"><span>P168</span><span>3,5 litros</span><span>19 cm de altura</span></p>
@@ -128,7 +133,7 @@
    </div>
   </article>
   <article class="obra" data-cat="cha">
-   <figure class="obra-foto"><img src="img/acervo/P264.webp" alt="Bule de chá com alça de madeira em estanho sobre pedestal de madeira" width="1000" height="1250" loading="lazy" decoding="async"></figure>
+   <figure class="obra-foto"><img src="img/acervo/P264-600.webp" srcset="img/acervo/P264-600.webp 600w, img/acervo/P264.webp 1000w" sizes="(max-width:640px) 46vw, (max-width:1180px) 30vw, 250px" alt="Bule de chá com alça de madeira em estanho sobre pedestal de madeira" width="1000" height="1250" loading="lazy" decoding="async"></figure>
    <div class="obra-txt">
     <h3>Bule de chá com alça de madeira</h3>
     <p class="obra-ref"><span>P264</span><span>1,62 litro</span></p>
@@ -137,7 +142,7 @@
    </div>
   </article>
   <article class="obra" data-cat="liturgia">
-   <figure class="obra-foto"><img src="img/acervo/P9.webp" alt="Tocheiro barroco em estanho sobre pedestal de madeira" width="1000" height="1250" loading="lazy" decoding="async"></figure>
+   <figure class="obra-foto"><img src="img/acervo/P9-600.webp" srcset="img/acervo/P9-600.webp 600w, img/acervo/P9.webp 1000w" sizes="(max-width:640px) 46vw, (max-width:1180px) 30vw, 250px" alt="Tocheiro barroco em estanho sobre pedestal de madeira" width="1000" height="1250" loading="lazy" decoding="async"></figure>
    <div class="obra-txt">
     <h3>Tocheiro barroco</h3>
     <p class="obra-ref"><span>P9</span></p>
@@ -146,7 +151,7 @@
    </div>
   </article>
   <article class="obra" data-cat="mesa">
-   <figure class="obra-foto"><img src="img/acervo/P154A.webp" alt="Jarra suíça com tampa em estanho sobre pedestal de madeira" width="1000" height="1250" loading="lazy" decoding="async"></figure>
+   <figure class="obra-foto"><img src="img/acervo/P154A-600.webp" srcset="img/acervo/P154A-600.webp 600w, img/acervo/P154A.webp 1000w" sizes="(max-width:640px) 46vw, (max-width:1180px) 30vw, 250px" alt="Jarra suíça com tampa em estanho sobre pedestal de madeira" width="1000" height="1250" loading="lazy" decoding="async"></figure>
    <div class="obra-txt">
     <h3>Jarra suíça com tampa</h3>
     <p class="obra-ref"><span>P154A</span><span>1,7 litro</span><span>27,5 cm de altura</span></p>
@@ -155,7 +160,7 @@
    </div>
   </article>
   <article class="obra" data-cat="bar">
-   <figure class="obra-foto"><img src="img/acervo/CA446.webp" alt="Champanheira canelada em estanho sobre pedestal de madeira" width="1000" height="1250" loading="lazy" decoding="async"></figure>
+   <figure class="obra-foto"><img src="img/acervo/CA446-600.webp" srcset="img/acervo/CA446-600.webp 600w, img/acervo/CA446.webp 1000w" sizes="(max-width:640px) 46vw, (max-width:1180px) 30vw, 250px" alt="Champanheira canelada em estanho sobre pedestal de madeira" width="1000" height="1250" loading="lazy" decoding="async"></figure>
    <div class="obra-txt">
     <h3>Champanheira canelada</h3>
     <p class="obra-ref"><span>CA446</span><span>10 litros</span></p>
@@ -164,7 +169,7 @@
    </div>
   </article>
   <article class="obra" data-cat="cha">
-   <figure class="obra-foto"><img src="img/acervo/CA405C.webp" alt="Cafeteira canelada em estanho sobre pedestal de madeira" width="1000" height="1250" loading="lazy" decoding="async"></figure>
+   <figure class="obra-foto"><img src="img/acervo/CA405C-600.webp" srcset="img/acervo/CA405C-600.webp 600w, img/acervo/CA405C.webp 1000w" sizes="(max-width:640px) 46vw, (max-width:1180px) 30vw, 250px" alt="Cafeteira canelada em estanho sobre pedestal de madeira" width="1000" height="1250" loading="lazy" decoding="async"></figure>
    <div class="obra-txt">
     <h3>Cafeteira canelada</h3>
     <p class="obra-ref"><span>CA405C</span><span>1,9 litro</span><span>23,5 cm de altura</span></p>
@@ -173,7 +178,7 @@
    </div>
   </article>
   <article class="obra" data-cat="liturgia">
-   <figure class="obra-foto"><img src="img/acervo/P532.webp" alt="Candelabro de sete velas em estanho sobre pedestal de madeira" width="1000" height="1250" loading="lazy" decoding="async"></figure>
+   <figure class="obra-foto"><img src="img/acervo/P532-600.webp" srcset="img/acervo/P532-600.webp 600w, img/acervo/P532.webp 1000w" sizes="(max-width:640px) 46vw, (max-width:1180px) 30vw, 250px" alt="Candelabro de sete velas em estanho sobre pedestal de madeira" width="1000" height="1250" loading="lazy" decoding="async"></figure>
    <div class="obra-txt">
     <h3>Candelabro de sete velas</h3>
     <p class="obra-ref"><span>P532</span><span>35 cm de altura</span></p>
@@ -182,7 +187,7 @@
    </div>
   </article>
   <article class="obra" data-cat="mesa">
-   <figure class="obra-foto"><img src="img/acervo/P29A.webp" alt="Molheira francesa em estanho sobre pedestal de madeira" width="1000" height="1250" loading="lazy" decoding="async"></figure>
+   <figure class="obra-foto"><img src="img/acervo/P29A-600.webp" srcset="img/acervo/P29A-600.webp 600w, img/acervo/P29A.webp 1000w" sizes="(max-width:640px) 46vw, (max-width:1180px) 30vw, 250px" alt="Molheira francesa em estanho sobre pedestal de madeira" width="1000" height="1250" loading="lazy" decoding="async"></figure>
    <div class="obra-txt">
     <h3>Molheira francesa</h3>
     <p class="obra-ref"><span>P29A</span><span>400 ml</span></p>
@@ -191,7 +196,7 @@
    </div>
   </article>
   <article class="obra" data-cat="bar">
-   <figure class="obra-foto"><img src="img/acervo/P439.webp" alt="Decanter para vinho em estanho sobre pedestal de madeira" width="1000" height="1250" loading="lazy" decoding="async"></figure>
+   <figure class="obra-foto"><img src="img/acervo/P439-600.webp" srcset="img/acervo/P439-600.webp 600w, img/acervo/P439.webp 1000w" sizes="(max-width:640px) 46vw, (max-width:1180px) 30vw, 250px" alt="Decanter para vinho em estanho sobre pedestal de madeira" width="1000" height="1250" loading="lazy" decoding="async"></figure>
    <div class="obra-txt">
     <h3>Decanter para vinho</h3>
     <p class="obra-ref"><span>P439</span><span>18 cm de altura</span></p>
@@ -200,7 +205,7 @@
    </div>
   </article>
   <article class="obra" data-cat="cha">
-   <figure class="obra-foto"><img src="img/acervo/P37A.webp" alt="Açucareiro colonial em estanho sobre pedestal de madeira" width="1000" height="1250" loading="lazy" decoding="async"></figure>
+   <figure class="obra-foto"><img src="img/acervo/P37A-600.webp" srcset="img/acervo/P37A-600.webp 600w, img/acervo/P37A.webp 1000w" sizes="(max-width:640px) 46vw, (max-width:1180px) 30vw, 250px" alt="Açucareiro colonial em estanho sobre pedestal de madeira" width="1000" height="1250" loading="lazy" decoding="async"></figure>
    <div class="obra-txt">
     <h3>Açucareiro colonial</h3>
     <p class="obra-ref"><span>P37A</span><span>450 ml</span></p>
@@ -209,7 +214,7 @@
    </div>
   </article>
   <article class="obra" data-cat="bar">
-   <figure class="obra-foto"><img src="img/acervo/CA434.webp" alt="Cinzeiro para charutos em estanho sobre pedestal de madeira" width="1000" height="1250" loading="lazy" decoding="async"></figure>
+   <figure class="obra-foto"><img src="img/acervo/CA434-600.webp" srcset="img/acervo/CA434-600.webp 600w, img/acervo/CA434.webp 1000w" sizes="(max-width:640px) 46vw, (max-width:1180px) 30vw, 250px" alt="Cinzeiro para charutos em estanho sobre pedestal de madeira" width="1000" height="1250" loading="lazy" decoding="async"></figure>
    <div class="obra-txt">
     <h3>Cinzeiro para charutos</h3>
     <p class="obra-ref"><span>CA434</span></p>
@@ -218,7 +223,7 @@
    </div>
   </article>
   <article class="obra" data-cat="mesa">
-   <figure class="obra-foto"><img src="img/acervo/P102A.webp" alt="Travessa oval em estanho sobre pedestal de madeira" width="1000" height="1250" loading="lazy" decoding="async"></figure>
+   <figure class="obra-foto"><img src="img/acervo/P102A-600.webp" srcset="img/acervo/P102A-600.webp 600w, img/acervo/P102A.webp 1000w" sizes="(max-width:640px) 46vw, (max-width:1180px) 30vw, 250px" alt="Travessa oval em estanho sobre pedestal de madeira" width="1000" height="1250" loading="lazy" decoding="async"></figure>
    <div class="obra-txt">
     <h3>Travessa oval</h3>
     <p class="obra-ref"><span>P102A</span><span>37 cm de comprimento</span></p>
@@ -227,7 +232,7 @@
    </div>
   </article>
   <article class="obra" data-cat="bar">
-   <figure class="obra-foto"><img src="img/acervo/VA3.webp" alt="Copo holandês William and Mary em estanho sobre pedestal de madeira" width="1000" height="1250" loading="lazy" decoding="async"></figure>
+   <figure class="obra-foto"><img src="img/acervo/VA3-600.webp" srcset="img/acervo/VA3-600.webp 600w, img/acervo/VA3.webp 1000w" sizes="(max-width:640px) 46vw, (max-width:1180px) 30vw, 250px" alt="Copo holandês William and Mary em estanho sobre pedestal de madeira" width="1000" height="1250" loading="lazy" decoding="async"></figure>
    <div class="obra-txt">
     <h3>Copo holandês William and Mary</h3>
     <p class="obra-ref"><span>VA3</span><span>480 ml</span><span>11 cm de altura</span></p>
@@ -236,7 +241,7 @@
    </div>
   </article>
   <article class="obra" data-cat="liturgia">
-   <figure class="obra-foto"><img src="img/acervo/P170.webp" alt="Cálice litúrgico em estanho sobre pedestal de madeira" width="1000" height="1250" loading="lazy" decoding="async"></figure>
+   <figure class="obra-foto"><img src="img/acervo/P170-600.webp" srcset="img/acervo/P170-600.webp 600w, img/acervo/P170.webp 1000w" sizes="(max-width:640px) 46vw, (max-width:1180px) 30vw, 250px" alt="Cálice litúrgico em estanho sobre pedestal de madeira" width="1000" height="1250" loading="lazy" decoding="async"></figure>
    <div class="obra-txt">
     <h3>Cálice litúrgico</h3>
     <p class="obra-ref"><span>P170</span><span>26 cm de altura</span></p>
