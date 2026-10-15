@@ -6,8 +6,8 @@
 // Não tem relógio próprio: tick() roda no rAF do app.
 const FPS = 24;
 const amortece = (k, dt) => 1 - Math.exp(-k * dt);
-// 540 px só em tela pequena sem retina; no resto (iPhone incluso) o de 800 px, igual ao pôster que já está na tela
-const leve = matchMedia('(max-width: 820px) and (max-resolution: 1.5dppx)');
+// 540 px só em tela pequena de densidade 1; em todo o resto o arquivo de 960 px (o tamanho nativo do giro), igual ao pôster
+const leve = matchMedia('(max-width: 820px) and (max-resolution: 1dppx)');
 
 export class Giro {
   constructor(el, { reduz = false } = {}) {
@@ -41,7 +41,7 @@ export class Giro {
   // baixa o vídeo inteiro antes de usar (arrastar não pode esperar rede)
   carrega() {
     if (this.carregando) return this.prom; this.carregando = true;
-    const url = `giro/${this.nome}-${leve.matches ? 'm' : 'd'}.mp4`;
+    const url = `giro/${this.nome}-${leve.matches ? 'm' : 'd'}.mp4?v=8`; // versão no endereço: o cache de 1 dia não segura o arquivo antigo
     this.prom = fetch(url).then(r => { if (!r.ok) throw new Error(r.status); return r.blob(); })
       .then(b => { this.v.src = URL.createObjectURL(b); this.v.preload = 'auto'; this.v.load(); })
       .catch(() => { this.v.src = url; this.v.preload = 'auto'; this.v.load(); });

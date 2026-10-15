@@ -1,8 +1,8 @@
 // John Somers: museu escuro. As peças do topo são FOTO REAL girando (giro.js: vídeo 360° all-intra, arrastar escolhe
-// o quadro); o three só existe no close da punção (marca3d.js, carregado sob demanda).
+// o quadro); o close da punção também é foto, com a luz rasante andando por cima.
 // Um relógio só (este rAF) para a rolagem (Lenis), os giros, a vitrine e o 3D.
 import Lenis from 'lenis';
-import { Giro } from './giro.js';
+import { Giro } from './giro.js?v=8';
 
 const html = document.documentElement, $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const reduz = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -72,20 +72,9 @@ function vitrine(s, A) {
   return pos;
 }
 
-// ---------- a marca no metal: 3D só aqui, sob demanda ----------
-const canvas = $('#gl'); let m3d = null, m3dPedido = false, marcaNaTela = false;
-function pedeMarca() {
-  if (m3dPedido) return; m3dPedido = true;
-  import('./marca3d.js').then(m => m.marca3d(canvas, { movel, reduz }))
-    .then(r => { if (!r) return semTres(); m3d = r; requestAnimationFrame(() => requestAnimationFrame(() => canvas.classList.add('on'))); })
-    .catch(e => { console.warn('3D da marca', e); semTres(); });
-}
-function semTres() { html.classList.add('sem3d'); m3d = null; }
-canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); semTres(); }, false);
-// monta depois do vídeo do topo (não disputa a rede com ele), com a página ociosa e nunca com o dedo girando a jarra
-giroHeroi.prom.finally(() => { const pede = () => giroHeroi.pega !== null ? setTimeout(pede, 400) : (window.requestIdleCallback || setTimeout)(pedeMarca, { timeout: 2000 }); pede(); });
-new IntersectionObserver(([e]) => { if (e.isIntersecting && scrollY > 0) pedeMarca(); }, { rootMargin: '20% 0px' }).observe($('#marca')); // rolou rápido: carrega antes
-new IntersectionObserver(([e]) => { marcaNaTela = e.isIntersecting; }, { rootMargin: '0px 0px -1px 0px' }).observe($('#marca')); // desenha só com a seção na tela (encostar na borda não conta)
+// ---------- a marca no metal: o close é foto; a luz rasante anda por cima dela ----------
+const close = $('#marca .close'); let marcaNaTela = false, luzAnt = '';
+new IntersectionObserver(([e]) => { marcaNaTela = e.isIntersecting; }, { rootMargin: '0px 0px -1px 0px' }).observe($('#marca'));
 // luz: mouse no desktop, inclinação no celular, senão varre com a rolagem
 let mx = 0, my = 0, temMouse = false, gx = 0, gy = 0, temGiro = false;
 addEventListener('pointermove', e => { if (e.pointerType === 'mouse') { temMouse = true; mx = e.clientX / innerWidth * 2 - 1; my = -(e.clientY / innerHeight * 2 - 1); } }, { passive: true });
@@ -133,7 +122,7 @@ function medir() {
   A.passo = trilhoVit.firstElementChild.offsetWidth; posAnt = -1; // distância entre pedestais (75vw no desktop, a tela inteira no celular)
 }
 let rsz = 0;
-addEventListener('resize', () => { cancelAnimationFrame(rsz); rsz = requestAnimationFrame(() => { movel = ehMovel(); html.classList.toggle('toque', movel); medir(); m3d?.tamanho(); }); });
+addEventListener('resize', () => { cancelAnimationFrame(rsz); rsz = requestAnimationFrame(() => { movel = ehMovel(); html.classList.toggle('toque', movel); medir(); }); });
 addEventListener('load', medir); document.fonts?.ready.then(medir);
 medir();
 
@@ -148,12 +137,15 @@ function quadro(now) {
   if (filme) { const rev = clamp((s + A.H - A.f0) / (A.H * .75)); filme.style.setProperty('--rev', reduz ? 1 : rev.toFixed(3)); }
   const pos = vitrine(s, A);
   for (const g of todosGiros) g.tick(now, dt);
-  if (m3d && marcaNaTela) {
+  if (marcaNaTela) {
     const prog = clamp((s - A.m0) / A.mh);
-    if (temMouse && !movel) { lx = mx; ly = my; }
-    else if (temGiro && movel) { lx = gx; ly = gy * .6 + .1; }
-    else { lx = Math.sin(prog * Math.PI * 2.4 - 1.2); ly = .1; } // sem mouse: a luz varre a punção com a rolagem
-    m3d.quadro(now, dt, prog, lx, ly);
+    let ax, ay;
+    if (temMouse && !movel) { ax = mx; ay = my; }
+    else if (temGiro && movel) { ax = gx; ay = gy * .6 + .1; }
+    else { ax = Math.sin(prog * Math.PI * 2.4 - 1.2); ay = .1; } // sem mouse: a luz varre a punção com a rolagem
+    const k = reduz ? 1 : 1 - Math.exp(-4 * dt); lx += (ax - lx) * k; ly += (ay - ly) * k;
+    const v = `${(.5 + lx * .32).toFixed(3)}|${(.48 - ly * .22).toFixed(3)}|${(1.06 - .06 * Math.min(1, prog / .5)).toFixed(4)}`; // a câmera chega um pouco e para
+    if (v !== luzAnt) { luzAnt = v; const [a, b, z] = v.split('|'); close.style.setProperty('--lx', a); close.style.setProperty('--ly', b); close.style.setProperty('--z', reduz ? 1 : z); }
   }
   // WhatsApp: fala da peça que está na tela
   waPara(s < A.m0 - A.H * .5 ? 'jarra' : s < A.v0 - A.H * .5 ? 'calice' : s < A.a0 - A.H * .6 ? IDS_VIT[Math.round(pos)] : null);
